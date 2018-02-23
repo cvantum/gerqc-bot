@@ -4,15 +4,22 @@ const fs = require("fs");
 const Discord = require("discord.js");
 
 const configFile = process.env.PWD+'/config/config.json';
+const Core = require(process.env.PWD+'/modules/core.js');
 
 
 try {
-	fs.accessSync(configFile, fs.F_OK);
-	var config = require(configFile);
+    fs.accessSync(configFile, fs.F_OK);
+    var config = require(configFile);
 } catch (error) {
-	console.error('Could not find File: '+configFile);
-	process.exit(1);
+    console.error('Could not find File: '+configFile);
+    process.exit(1);
 }
+
+//////////////////////////////////////
+// Starting instances from every module
+const core = new Core.CoreCommands(config);
+
+
 
 const mybot = new Discord.Client();
 mybot.login(config.discord_token);
@@ -42,26 +49,13 @@ mybot.on('ready', () => {
 mybot.on('message', (message) => {
     if (!message.author.bot && message.content.startsWith(config.discord_prefix)) {
         let command = message.content.split(" ")[0].substring(1);
+        let values = [];
         let response_message = [];
-        switch (command) {
-            case 'cointoss':
-                let cointoss = Math.floor(Math.random() * 2);
-                console.log(cointoss);
-                if (cointoss === 0) {
-                    response_message.push('Kopf');
-                } else {
-                    response_message.push('Zahl');
-                }
-                break;
-            default:
-                //
+        if (userCommands.hasOwnProperty(command)) {
+            console.log("Emitted user-command");
+            userCommands[command].process(mybot,message,values);
         }
         message.channel.send(response_message.join('\n'));
-    } else if (message.content === 'ping') {
-        console.log(message.author);
-        console.log(message.channel.type);
-        console.log(message.member.roles.get('409393569833549827'));
-        message.reply('pong');
     }
 });
 
@@ -70,3 +64,16 @@ mybot.on('guildMemberAvailable', (member) => {
     console.log(member.user);
 });
 
+//////////////////////////////////////
+// Get List of User-Commands for loaded modules
+function getUserCommands() {
+    let commands = {};
+    let coreCommands = core.getUserCommands();
+    for (let coreCmd in coreCommands) {
+        commands[coreCmd] = coreCommands[coreCmd];
+    }
+    return commands;
+}
+
+let userCommands = getUserCommands();
+console.log(userCommands);
