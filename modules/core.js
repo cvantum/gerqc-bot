@@ -24,7 +24,7 @@ exports.CoreCommands = class CoreCommands {
 					response.push(infoText);
 					response.push('Repository: https://github.com/cvantum/gerqc-bot');
 					response.push('For help, issues and feature-requests send a message to **\@cvantum**');
-					msg.channel.sendMessage(response.join('\n'));
+					msg.channel.send(response.join('\n'));
 					// Log to console
 					console.log('info abfrage by: ' + msg.author.username );
 				}
@@ -41,6 +41,7 @@ exports.CoreCommands = class CoreCommands {
                         response.push('Zahl');
                     }
                     msg.channel.send(response.join('\n'));
+                    console.log('info abfrage by: ' + msg.author.username );
                 }
             }
 		};

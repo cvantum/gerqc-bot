@@ -5,6 +5,8 @@ const Discord = require("discord.js");
 
 const configFile = process.env.PWD+'/config/config.json';
 const Core = require(process.env.PWD+'/modules/core.js');
+const Challonge = require(process.env.PWD+'/modules/challonge.js');
+const QCAPI = require(process.env.PWD+'/modules/qc-api.js');
 
 
 try {
@@ -18,6 +20,8 @@ try {
 //////////////////////////////////////
 // Starting instances from every module
 const core = new Core.CoreCommands(config);
+const challonge = new Challonge.ChallongeCommands(config);
+const qcapi = new QCAPI.QcAPICommands(config);
 
 
 
@@ -71,6 +75,16 @@ function getUserCommands() {
     let coreCommands = core.getUserCommands();
     for (let coreCmd in coreCommands) {
         commands[coreCmd] = coreCommands[coreCmd];
+    }
+
+    let challongeCommands = challonge.getUserCommands();
+    for (let challongeCmd in challongeCommands) {
+        commands[challongeCmd] = challongeCommands[challongeCmd];
+    }
+
+    let qcapiCommands = qcapi.getUserCommands();
+    for (let qcCmd in qcapiCommands) {
+        commands[qcCmd] = qcapiCommands[qcCmd];
     }
     return commands;
 }
