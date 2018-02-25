@@ -58,13 +58,20 @@ mybot.on('message', (message) => {
         if (userCommands.hasOwnProperty(command)) {
             console.log("Emitted user-command");
             userCommands[command].process(mybot,message,values);
+        } else if ( command === "help") {
+            let response = [];
+            for (var cmd in userCommands) {
+                response.push('**' + config.discord_prefix + cmd + '**: ' + userCommands[cmd].desc)
+            }
+            message.channel.send(response.join("\n"));
+            console.log("help abfrage by: " + message.author.username);
         }
-        message.channel.send(response_message.join('\n'));
     }
 });
 
 //mybot.on('guildMemberAdd', member => {
 mybot.on('guildMemberAvailable', (member) => {
+    console.log("guildMember");
     console.log(member.user);
 });
 

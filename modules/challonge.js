@@ -1,5 +1,7 @@
 "use strict";
 
+const request = require('request');
+
 exports.ChallongeCommands = class ChallongeCommands {
     constructor(config) {
         this.config = config;
