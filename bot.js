@@ -65,13 +65,15 @@ mybot.on('message', (message) => {
             }
             message.channel.send(response.join("\n"));
             console.log("help abfrage by: " + message.author.username);
+            //console.log(message.member.roles);
         }
     }
 });
 
 //mybot.on('guildMemberAdd', member => {
-mybot.on('guildMemberAvailable', (member) => {
-    console.log("guildMember");
+mybot.on('guildMemberAdd', (member) => {
+    console.log("guildMember in Rolle Quakers");
+    member.addRole('409393569833549827');
     console.log(member.user);
 });
 
