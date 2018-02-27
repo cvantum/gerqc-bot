@@ -43,7 +43,28 @@ exports.CoreCommands = class CoreCommands {
                     msg.channel.send(response.join('\n'));
                     console.log('info abfrage by: ' + msg.author.username );
                 }
-            }
+            },
+			"map": {
+				desc: "Random-Map aus Mappool",
+				process: function (bot,msg,values) {
+					let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
+					let response = [];
+					response.push('Die Map ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
+					msg.channel.send(response.join('\n'));
+					console.log('Random-Map für '+msg.author.username);
+                }
+			},
+			"mappool": {
+				desc: "Mappool für Generator",
+				process: function (bot,msg,values) {
+                    let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
+					let response = [];
+					response.push('**Mappool**:');
+					response.push(mappool.join(', '));
+					msg.channel.send(response.join('\n'));
+					console.log('Mappool-Abfrage für '+msg.author.username);
+                }
+			}
 		};
 		return commands;
     }
