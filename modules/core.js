@@ -57,12 +57,41 @@ exports.CoreCommands = class CoreCommands {
 			"mappool": {
 				desc: "Mappool für Generator",
 				process: function (bot,msg,values) {
-                    let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
+                    const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
 					let response = [];
 					response.push('**Mappool**:');
 					response.push(mappool.join(', '));
 					msg.channel.send(response.join('\n'));
 					console.log('Mappool-Abfrage für '+msg.author.username);
+                }
+			},
+			"duelchamps" : {
+				desc: "Genrator für drei Champions in Duel",
+				process: function (bot,msg,values) {
+					const champpool = [
+						'Anarki',
+						'Sorlag',
+						'Slash',
+						'Keel',
+						'Visor',
+						'Slash',
+						'Ranger',
+						'Doom Guy',
+						'Scalebearer',
+						'Nyx',
+						'Clutch',
+						'Galena',
+						'B.J. Blazkowicz'
+					];
+					let response = [];
+					response.push('**Champions-Auswahl für Duel**');
+					response.push('```');
+					response.push(champpool.splice(Math.floor(Math.random()*champpool.length), 1));
+                    response.push(champpool.splice(Math.floor(Math.random()*champpool.length), 1));
+                    response.push(champpool.splice(Math.floor(Math.random()*champpool.length), 1));
+					response.push('```');
+                    msg.channel.send(response.join('\n'));
+                    console.log('Duelchamps-Abfrage für '+msg.author.username);
                 }
 			}
 		};

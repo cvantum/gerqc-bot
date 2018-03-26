@@ -7,6 +7,6 @@
   "dependencies": {
     "co": "^4.6.0",
     "discord.js": "^11.3.0",
-    "request": "^2.83.0"
+    "request": "^2.85.0"
   }
 }
