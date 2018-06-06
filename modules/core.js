@@ -6,7 +6,7 @@ exports.CoreCommands = class CoreCommands {
     }
 
     getUserCommands() {
-        let commands = {
+        return {
 			"info" : {
 				desc : "Get details of bot, developer and further informations",
 				process: function(bot,msg,values) {
@@ -47,7 +47,7 @@ exports.CoreCommands = class CoreCommands {
 			"map": {
 				desc: "Random-Map aus Mappool",
 				process: function (bot,msg,values) {
-					let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
+					let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
 					let response = [];
 					response.push('Die Map ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
 					msg.channel.send(response.join('\n'));
@@ -57,7 +57,7 @@ exports.CoreCommands = class CoreCommands {
 			"mappool": {
 				desc: "Mappool für Generator",
 				process: function (bot,msg,values) {
-                    const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath'];
+                    const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
 					let response = [];
 					response.push('**Mappool**:');
 					response.push(mappool.join(', '));
@@ -81,7 +81,8 @@ exports.CoreCommands = class CoreCommands {
 						'Nyx',
 						'Clutch',
 						'Galena',
-						'B.J. Blazkowicz'
+						'B.J. Blazkowicz',
+						'Strogg and Peeker'
 					];
 					let response = [];
 					response.push('**Champions-Auswahl für Duel**');
@@ -95,6 +96,5 @@ exports.CoreCommands = class CoreCommands {
                 }
 			}
 		};
-		return commands;
     }
 };
