@@ -53,7 +53,7 @@ mybot.on('ready', () => {
 mybot.on('message', (message) => {
     if (!message.author.bot && message.content.startsWith(config.discord_prefix)) {
         let command = message.content.split(" ")[0].substring(1);
-        let values = [];
+        let values = message.content.split(" ").slice(1);
         let response_message = [];
         if (userCommands.hasOwnProperty(command)) {
             console.log("Emitted user-command");
