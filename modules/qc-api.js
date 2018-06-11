@@ -11,12 +11,12 @@ exports.QcAPICommands = class QcAPICommands {
     getUserCommands() {
         return {
             "rank" : {
-                dsec: "QC Ranks und Stats",
+                desc: "QC Ranks und Stats",
                 process: function (bot,msg,values) {
                     //console.log('error:', error); // Print the error if one occurred
                     //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
                     //let response = [];
-                    request("https://stats.quake.com/api/v2/Player/Stats?name="+values[0], (error, response, body) => {
+                    request("https://stats.quake.com/api/v2/Player/Stats?name="+values.join('%20'), (error, response, body) => {
                         var response = [];
                         //console.log('body:', body); // Print the HTML for the Google homepage.
                         //console.log(body);
