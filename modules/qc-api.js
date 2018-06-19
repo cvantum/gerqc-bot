@@ -26,7 +26,8 @@ exports.QcAPICommands = class QcAPICommands {
                             response.push('*Kein Nutzer gefunden*');
                         } else {
                             let qc_data = JSON.parse(body);
-                            response.push('**Rang für: **' + qc_data.name);
+                            response.push('**Stats für: **' + qc_data.name);
+                            response.push('**Level**:`'+qc_data.playerLevelState.level+'`');
                             response.push('**Duel**');
                             response.push('```');
                             response.push('Rating: ' + qc_data.playerRatings.duel.rating + '±' + qc_data.playerRatings.duel.deviation);
