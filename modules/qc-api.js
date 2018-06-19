@@ -11,7 +11,7 @@ exports.QcAPICommands = class QcAPICommands {
     getUserCommands() {
         return {
             "rank" : {
-                desc: "QC Ranks und Stats",
+                desc: "QC SR und Stats",
                 process: function (bot,msg,values) {
                     //console.log('error:', error); // Print the error if one occurred
                     //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
@@ -29,12 +29,12 @@ exports.QcAPICommands = class QcAPICommands {
                             response.push('**Rang für: **' + qc_data.name);
                             response.push('**Duel**');
                             response.push('```');
-                            response.push('Rang: ' + qc_data.playerRatings.duel.rating);
+                            response.push('Rating: ' + qc_data.playerRatings.duel.rating + '±' + qc_data.playerRatings.duel.deviation);
                             response.push('Spiele: ' + qc_data.playerRatings.duel.gamesCount);
                             response.push('```');
                             response.push('**2on2**');
                             response.push('```');
-                            response.push('Rang: ' + qc_data.playerRatings.tdm.rating);
+                            response.push('Rating: ' + qc_data.playerRatings.tdm.rating + '±' + qc_data.playerRatings.tdm.deviation);
                             response.push('Spiele: ' + qc_data.playerRatings.tdm.gamesCount);
                             response.push('```');
                         }
@@ -44,6 +44,19 @@ exports.QcAPICommands = class QcAPICommands {
                     console.log('rank aufruf by: ' + msg.author.username );
                 }
 
+            },
+            "lfp" : {
+                desc: "Suche nach Spielern mit ähnlichem SR",
+                process: function (bot,msg,values) {
+                    if (values[0] === 'duel') {
+
+                    } else if (values[0] === '2on2') {
+
+                    } else {
+
+                    }
+                    console.log('lfp aufruf by: ' + msg.author.username );
+                }
             }
         };
     }

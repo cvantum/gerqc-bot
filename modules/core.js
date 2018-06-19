@@ -47,7 +47,7 @@ exports.CoreCommands = class CoreCommands {
 			"map": {
 				desc: "Random-Map aus Mappool",
 				process: function (bot,msg,values) {
-					let mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
+					const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
 					let response = [];
 					response.push('Die Map ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
 					msg.channel.send(response.join('\n'));

@@ -7,6 +7,7 @@ const configFile = process.env.PWD+'/config/config.json';
 const Core = require(process.env.PWD+'/modules/core.js');
 const Challonge = require(process.env.PWD+'/modules/challonge.js');
 const QCAPI = require(process.env.PWD+'/modules/qc-api.js');
+const DraftCup = require(process.env.PWD+'/modules/draft-cup.js');
 
 
 try {
@@ -22,6 +23,7 @@ try {
 const core = new Core.CoreCommands(config);
 const challonge = new Challonge.ChallongeCommands(config);
 const qcapi = new QCAPI.QcAPICommands(config);
+const draftCup = new DraftCup.DraftCommands(config);
 
 
 
@@ -95,6 +97,12 @@ function getUserCommands() {
     for (let qcCmd in qcapiCommands) {
         commands[qcCmd] = qcapiCommands[qcCmd];
     }
+
+    let draftCommands = draftCup.getUserCommands();
+    for (let draftCmd in draftCommands) {
+        commands[draftCmd] = draftCommands[draftCmd];
+    }
+
     return commands;
 }
 
