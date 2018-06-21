@@ -27,15 +27,15 @@ exports.QcAPICommands = class QcAPICommands {
                         } else {
                             let qc_data = JSON.parse(body);
                             response.push('**Stats für: **' + qc_data.name);
-                            response.push('**Level**:`'+qc_data.playerLevelState.level+'`');
+                            response.push('**Level**: `'+qc_data.playerLevelState.level+'`');
                             response.push('**Duel**');
                             response.push('```');
-                            response.push('Rating: ' + qc_data.playerRatings.duel.rating + '±' + qc_data.playerRatings.duel.deviation);
+                            response.push('Rating: ' + qc_data.playerRatings.duel.rating + ' ± ' + qc_data.playerRatings.duel.deviation);
                             response.push('Spiele: ' + qc_data.playerRatings.duel.gamesCount);
                             response.push('```');
                             response.push('**2on2**');
                             response.push('```');
-                            response.push('Rating: ' + qc_data.playerRatings.tdm.rating + '±' + qc_data.playerRatings.tdm.deviation);
+                            response.push('Rating: ' + qc_data.playerRatings.tdm.rating + ' ± ' + qc_data.playerRatings.tdm.deviation);
                             response.push('Spiele: ' + qc_data.playerRatings.tdm.gamesCount);
                             response.push('```');
                         }
