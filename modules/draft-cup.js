@@ -40,8 +40,13 @@ exports.DraftCommands = class DraftCommands {
                     let response = [];
                     console.log(self);
                     if (self.hasOwnProperty('cup')) {
-                        response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
-                        self.cup.player_list.push(msg.author.id);
+                        if ( self.cup.player_list.includes(msg.author.id)) {
+                            response.push('Du bist bereits angemeldet');
+                        } else {
+                            //response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
+                            response.push('Du bist nun angemeldet');
+                            self.cup.player_list.push(msg.author.id);
+                        }
                     } else {
                         response.push('Kein Cup gestartet');
                     }
@@ -53,6 +58,17 @@ exports.DraftCommands = class DraftCommands {
                 desc: "Abmelden am Draft-Cup",
                 process: function (bot,msg,values) {
                     let response = [];
+                    console.log(self);
+                    if (self.hasOwnProperty('cup')) {
+                        if ( self.cup.player_list.includes(msg.author.id)) {
+                            response.push('Du bist nun abgemeldet');
+                            self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author.id),1);
+                        } else {
+                            response.push('Du bist nicht angemeldet');
+                        }
+                    } else {
+                        response.push('Kein Cup gestartet');
+                    }
                     msg.channel.send(response.join('\n'));
                     console.log('signout by: ' + msg.author.username );
                 }
