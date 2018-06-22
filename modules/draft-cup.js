@@ -25,10 +25,14 @@ exports.DraftCommands = class DraftCommands {
                         response.push('abort:  Abbrechen des Vorgangs');
                         response.push('clear:  Reset der bisherigen Daten');
                         response.push('```');
-                    } else if (values[0] === 'start') {
+                    } else if (values[0] === 'start' && !self.hasOwnProperty('cup')) {
                         let cup = self.getDraftCupMethod();
                         self.cup = cup;
+                        self.cup.creator_id = msg.author.id;
                         response.push('Cup gestartet');
+                    } else if ( values[0] === 'close' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                        self.cup.status = 'closed';
+                        response.push('Anmeldung geschlossen');
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('draft aufruf by: ' + msg.author.username );
@@ -39,7 +43,7 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     console.log(self);
-                    if (self.hasOwnProperty('cup')) {
+                    if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
                         if ( self.cup.player_list.includes(msg.author.id)) {
                             response.push('Du bist bereits angemeldet');
                         } else {
@@ -47,6 +51,8 @@ exports.DraftCommands = class DraftCommands {
                             response.push('Du bist nun angemeldet');
                             self.cup.player_list.push(msg.author.id);
                         }
+                    } else if (self.hasOwnProperty('cup') && self.cup.status === 'closed') {
+                        response.push('Anmeldung bereits geschlossen');
                     } else {
                         response.push('Kein Cup gestartet');
                     }
@@ -59,13 +65,15 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     console.log(self);
-                    if (self.hasOwnProperty('cup')) {
+                    if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
                         if ( self.cup.player_list.includes(msg.author.id)) {
                             response.push('Du bist nun abgemeldet');
                             self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author.id),1);
                         } else {
                             response.push('Du bist nicht angemeldet');
                         }
+                    } else if (self.hasOwnProperty('cup') && self.cup.status === 'closed') {
+                        response.push('Anmeldung geschlossen, abmelden ist nicht mehr möglich');
                     } else {
                         response.push('Kein Cup gestartet');
                     }
@@ -79,6 +87,7 @@ exports.DraftCommands = class DraftCommands {
 
     getDraftCupMethod () {
         return {
+            'creator_id' : '',
             'status' : 'open',
             'player_list': []
         };
