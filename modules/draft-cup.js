@@ -10,7 +10,7 @@ exports.DraftCommands = class DraftCommands {
         let self = this;
         return {
             "draft" : {
-                desc: "Draft-Cup start | stop | clear",
+                desc: "Draft-Cup start | stop | clear | help | close | reopen | abort",
                 process: function (bot,msg,values) {
                     let response = [];
                     if (values.length === 0) {
