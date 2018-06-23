@@ -5,10 +5,12 @@ const request = require('request');
 
 exports.QcAPICommands = class QcAPICommands {
     constructor(config) {
-        this.config = config;
+        let self = this;
+        self.config = config;
     }
 
     getUserCommands() {
+        let self = this;
         return {
             "rank" : {
                 desc: "QC SR und Stats",
@@ -31,11 +33,13 @@ exports.QcAPICommands = class QcAPICommands {
                             response.push('**Duel**');
                             response.push('```');
                             response.push('Rating: ' + qc_data.playerRatings.duel.rating + ' ± ' + qc_data.playerRatings.duel.deviation);
+                            response.push('Rank:   ' + self.calcRank(qc_data.playerRatings.duel.rating));
                             response.push('Spiele: ' + qc_data.playerRatings.duel.gamesCount);
                             response.push('```');
                             response.push('**2on2**');
                             response.push('```');
                             response.push('Rating: ' + qc_data.playerRatings.tdm.rating + ' ± ' + qc_data.playerRatings.tdm.deviation);
+                            response.push('Rank:   ' + self.calcRank(qc_data.playerRatings.tdm.rating));
                             response.push('Spiele: ' + qc_data.playerRatings.tdm.gamesCount);
                             response.push('```');
                         }
@@ -60,5 +64,67 @@ exports.QcAPICommands = class QcAPICommands {
                 }
             }
         };
+    }
+
+    calcRank(sr) {
+        if (typeof sr === 'string') {
+             sr = Number(sr);
+        }
+        //Bronze: 0 - 974
+        if (sr < 975) {
+            if ( sr < 675) {
+                return 'Bronze Tier 1';
+            } else if ( sr < 750 ) {
+                return 'Bronze Tier 2';
+            } else if ( sr < 825) {
+                return 'Bronze Tier 3';
+            } else if ( sr < 900) {
+                return 'Bronze Tier 4';
+            } else {
+                return 'Bronze Tier 5';
+            }
+        //Silber: 975 - 1349
+        } else if (sr < 1350) {
+            if ( sr < 975) {
+                return 'Silber Tier 1';
+            } else if ( sr < 1050) {
+                return 'Silber Tier 2';
+            } else if ( sr < 1125) {
+                return 'Silber Tier 3';
+            } else if ( sr < 1200) {
+                return 'Silber Tier 4';
+            } else {
+                return 'Silber Tier 5';
+            }
+        //Gold: 1350 - 1724
+        } else if ( sr < 1725) {
+            if ( sr < 1425) {
+                return 'Gold Tier 1';
+            } else if ( sr < 1500) {
+                return 'Gold Tier 2';
+            } else if ( sr < 1575) {
+                return 'Gold Tier 3';
+            } else if ( sr < 1650 ) {
+                return 'Gold Tier 4';
+            } else {
+                return 'Gold Tier 5';
+            }
+        //Diamond: 1725 - 2099
+        } else if ( sr < 2100) {
+            if ( sr < 1800) {
+                return 'Diamond Tier 1';
+            } else if ( sr < 1870) {
+                return 'Diamond Tier 2';
+            } else if ( sr < 1950) {
+                return 'Diamond Tier 3';
+            } else if ( sr < 2025) {
+                return 'Diamond Tier 4';
+            } else {
+                return 'Diamond Tier 5';
+            }
+        //Elite: ab 2100
+        } else {
+            return 'Elite';
+        }
     }
 };
