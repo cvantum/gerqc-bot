@@ -26,13 +26,27 @@ exports.DraftCommands = class DraftCommands {
                         response.push('clear:  Reset der bisherigen Daten');
                         response.push('```');
                     } else if (values[0] === 'start' && !self.hasOwnProperty('cup')) {
-                        let cup = self.getDraftCupMethod();
-                        self.cup = cup;
+                        self.cup = self.getDraftCupMethod();
                         self.cup.creator_id = msg.author.id;
                         response.push('Cup gestartet');
                     } else if ( values[0] === 'close' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
                         self.cup.status = 'closed';
                         response.push('Anmeldung geschlossen');
+                    } else if ( values[0] === 'responen' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                        if (self.cup.status === 'closed') {
+                            self.cup.status = 'open';
+                            response.push('Anmeldung offen');
+                        } else {
+                            response.push('Anmeldung kann nicht erneut geöffnet werden');
+                        }
+                    } else if ( values[0] === 'clear' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                        delete self.cup;
+                        self.cup = self.getDraftCupMethod();
+                        self.cup.creator_id = msg.author.id;
+                        response.push('Alle Daten zurück gesetzt');
+                    } else if ( values[0] === 'abort' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                        delete self.cup;
+                        response.push('Turnier abgebrochen');
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('draft aufruf by: ' + msg.author.username );
