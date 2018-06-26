@@ -17,36 +17,78 @@ exports.DraftCommands = class DraftCommands {
                         console.log(values.length);
                         response.push('Bitte Parameter angeben: `help | start | close | reopen | abort | clear`');
                     } else if ( values[0] === 'help') {
-                        response.push('```');
-                        response.push('help:   Diese Hilfe');
-                        response.push('start:  Starte einen neuen Draft-Cup');
-                        response.push('close:  Schließe die Anmeldung');
-                        response.push('reopen: Öffne die Anmeldung erneut');
-                        response.push('abort:  Abbrechen des Vorgangs');
-                        response.push('clear:  Reset der bisherigen Daten');
-                        response.push('```');
-                    } else if (values[0] === 'start' && !self.hasOwnProperty('cup')) {
-                        self.cup = self.getDraftCupMethod();
-                        self.cup.creator_id = msg.author.id;
-                        response.push('Cup gestartet');
-                    } else if ( values[0] === 'close' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                        self.cup.status = 'closed';
-                        response.push('Anmeldung geschlossen');
-                    } else if ( values[0] === 'responen' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                        if (self.cup.status === 'closed') {
-                            self.cup.status = 'open';
-                            response.push('Anmeldung offen');
-                        } else {
-                            response.push('Anmeldung kann nicht erneut geöffnet werden');
+
+                        switch (values[0]) {
+                            case 'help':
+                                response.push('```');
+                                response.push('help:   Diese Hilfe');
+                                response.push('start:  Starte einen neuen Draft-Cup');
+                                response.push('close:  Schließe die Anmeldung');
+                                response.push('reopen: Öffne die Anmeldung erneut');
+                                response.push('abort:  Abbrechen des Vorgangs');
+                                response.push('clear:  Reset der bisherigen Daten');
+                                response.push('```');
+                                break;
+                            case 'start':
+                                if (!self.hasOwnProperty('cup')) {
+                                    self.cup = self.getDraftCupMethod();
+                                    self.cup.creator_id = msg.author.id;
+                                    response.push('Cup gestartet');
+                                }
+                                break;
+                            case 'close':
+                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                                    self.cup.status = 'closed';
+                                    response.push('Anmeldung geschlossen');
+                                }
+                                break;
+                            case 'reopen':
+                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                                    if (self.cup.status === 'closed') {
+                                        self.cup.status = 'open';
+                                        response.push('Anmeldung offen');
+                                    } else {
+                                        response.push('Anmeldung kann nicht erneut geöffnet werden');
+                                    }
+                                }
+                                break;
+                            case 'init':
+                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                                    if ( self.cup.status === 'closed') {
+                                        switch (values[1]) {
+                                            case '3on3':
+                                                self.cup.status = 'init';
+                                                response.push('Draft-Cup initalisiert für 3on3');
+                                                break;
+                                            case '4on4':
+                                                self.cup.status = 'init';
+                                                response.push('Draft-Cup initialisiert für 4on4');
+                                                break;
+                                            default:
+                                                response.push('Modus nicht bekannt');
+                                                break;
+                                        }
+                                    }
+                                }
+                                break;
+                            case 'clear':
+                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                                    delete self.cup;
+                                    self.cup = self.getDraftCupMethod();
+                                    self.cup.creator_id = msg.author.id;
+                                    response.push('Alle Daten zurück gesetzt');
+                                }
+                                break;
+                            case 'abort':
+                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
+                                    delete self.cup;
+                                    response.push('Turnier abgebrochen');
+                                }
+                                break;
+                            default:
+                                response.push('Befehl nicht erkannt');
+                                break;
                         }
-                    } else if ( values[0] === 'clear' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                        delete self.cup;
-                        self.cup = self.getDraftCupMethod();
-                        self.cup.creator_id = msg.author.id;
-                        response.push('Alle Daten zurück gesetzt');
-                    } else if ( values[0] === 'abort' && self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                        delete self.cup;
-                        response.push('Turnier abgebrochen');
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('draft aufruf by: ' + msg.author.username );
