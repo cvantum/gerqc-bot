@@ -85,13 +85,13 @@ exports.QcAPICommands = class QcAPICommands {
             }
         //Silber: 975 - 1349
         } else if (sr < 1350) {
-            if ( sr < 975) {
+            if ( sr < 1050) {
                 return 'Silber Tier 1';
-            } else if ( sr < 1050) {
-                return 'Silber Tier 2';
             } else if ( sr < 1125) {
-                return 'Silber Tier 3';
+                return 'Silber Tier 2';
             } else if ( sr < 1200) {
+                return 'Silber Tier 3';
+            } else if ( sr < 1275) {
                 return 'Silber Tier 4';
             } else {
                 return 'Silber Tier 5';
