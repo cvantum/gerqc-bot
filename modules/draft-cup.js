@@ -10,14 +10,12 @@ exports.DraftCommands = class DraftCommands {
         let self = this;
         return {
             "draft" : {
-                desc: "Draft-Cup start | stop | clear | help | close | reopen | abort",
+                desc: "Draft-Cup start | stop | clear | help | close | reopen | abort | list",
                 process: function (bot,msg,values) {
                     let response = [];
                     if (values.length === 0) {
-                        console.log(values.length);
-                        response.push('Bitte Parameter angeben: `help | start | close | reopen | abort | clear`');
-                    } else if ( values[0] === 'help') {
-
+                        response.push('Bitte Parameter angeben: `help | start | close | reopen | abort | clear | list`');
+                    } else {
                         switch (values[0]) {
                             case 'help':
                                 response.push('```');
@@ -25,6 +23,7 @@ exports.DraftCommands = class DraftCommands {
                                 response.push('start:  Starte einen neuen Draft-Cup');
                                 response.push('close:  Schließe die Anmeldung');
                                 response.push('reopen: Öffne die Anmeldung erneut');
+                                response.push('list:   Auflistung aller Spieler');
                                 response.push('abort:  Abbrechen des Vorgangs');
                                 response.push('clear:  Reset der bisherigen Daten');
                                 response.push('```');
@@ -71,6 +70,22 @@ exports.DraftCommands = class DraftCommands {
                                     }
                                 }
                                 break;
+                            case 'list':
+                                if ( self.hasOwnProperty('cup')) {
+                                    console.log(self.cup.player_list.length);
+                                    if ( self.cup.player_list.length > 0 ) {
+                                        response.push('```');
+                                        for (let player in self.cup.player_list) {
+                                            response.push(self.cup.player_list[player].username);
+                                        }
+                                        response.push('```');
+                                    } else {
+                                        response.push('Keine Spieler angemeldet');
+                                    }
+                                } else {
+                                    response.push('Kein Cup gestartet');
+                                }
+                                break;
                             case 'clear':
                                 if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
                                     delete self.cup;
@@ -98,14 +113,13 @@ exports.DraftCommands = class DraftCommands {
                 desc: "Anmelden am Draft-Cup",
                 process: function (bot,msg,values) {
                     let response = [];
-                    console.log(self);
                     if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
-                        if ( self.cup.player_list.includes(msg.author.id)) {
+                        if ( self.cup.player_list.includes(msg.author)) {
                             response.push('Du bist bereits angemeldet');
                         } else {
                             //response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
                             response.push('Du bist nun angemeldet');
-                            self.cup.player_list.push(msg.author.id);
+                            self.cup.player_list.push(msg.author);
                         }
                     } else if (self.hasOwnProperty('cup') && self.cup.status === 'closed') {
                         response.push('Anmeldung bereits geschlossen');
@@ -114,6 +128,7 @@ exports.DraftCommands = class DraftCommands {
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('signup by: ' + msg.author.username );
+                    console.log(self.cup);
                 }
             },
             "signout" : {
@@ -122,9 +137,9 @@ exports.DraftCommands = class DraftCommands {
                     let response = [];
                     console.log(self);
                     if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
-                        if ( self.cup.player_list.includes(msg.author.id)) {
+                        if ( self.cup.player_list.includes(msg.author)) {
                             response.push('Du bist nun abgemeldet');
-                            self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author.id),1);
+                            self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author),1);
                         } else {
                             response.push('Du bist nicht angemeldet');
                         }
@@ -132,6 +147,37 @@ exports.DraftCommands = class DraftCommands {
                         response.push('Anmeldung geschlossen, abmelden ist nicht mehr möglich');
                     } else {
                         response.push('Kein Cup gestartet');
+                    }
+                    msg.channel.send(response.join('\n'));
+                    console.log('signout by: ' + msg.author.username );
+                }
+            },
+            "captain" : {
+                desc: "Bestimme Team-Leader für den Draft-Cup",
+                process: function (bot,msg,values) {
+                    let response = [];
+                    if ( self.hasOwnProperty('cup')) {
+                        if (self.cup.status === 'init' && self.cup.creator_id === msg.author.id) {
+                            response.push(values[0]);
+                        } else {
+                            response.push('Befehl wurde nicht ausgeführt');
+                        }
+                    } else {
+                        response.push('Cup nicht gestartet');
+                    }
+                    msg.channel.send(response.join('\n'));
+                    console.log('signout by: ' + msg.author.username );
+                }
+            },
+            "pick" : {
+                desc: "Wähle einen Spieler aus",
+                process: function (bot,msg,values) {
+                    let response = [];
+                    if ( self.hasOwnProperty('cup')) {
+                        //Ab hier passiert die Magie
+                        response.push('Hier wird ausgewählt');
+                    } else {
+                        response.push('Cup nicht gestartet')
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('signout by: ' + msg.author.username );
