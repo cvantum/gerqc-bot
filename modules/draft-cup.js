@@ -36,38 +36,56 @@ exports.DraftCommands = class DraftCommands {
                                 }
                                 break;
                             case 'close':
-                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                                    self.cup.status = 'closed';
-                                    response.push('Anmeldung geschlossen');
+                                if ( self.hasOwnProperty('cup') ) {
+                                    if (self.cup.status === 'open' && self.cup.creator_id === msg.author.id) {
+                                        self.cup.status = 'closed';
+                                        response.push('Anmeldung geschlossen');
+                                    } else {
+                                        response.push('*Keine Berechtigung*');
+                                    }
+                                } else {
+                                    response.push('Kein Cup gestartet');
                                 }
                                 break;
                             case 'reopen':
-                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                                    if (self.cup.status === 'closed') {
+                                if ( self.hasOwnProperty('cup') ) {
+                                    if (self.cup.status === 'closed' && self.cup.creator_id === msg.author.id) {
                                         self.cup.status = 'open';
                                         response.push('Anmeldung offen');
                                     } else {
                                         response.push('Anmeldung kann nicht erneut geöffnet werden');
                                     }
+                                } else {
+                                    response.push('Kein Cup gestartet');
                                 }
                                 break;
                             case 'init':
-                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                                    if ( self.cup.status === 'closed') {
-                                        switch (values[1]) {
-                                            case '3on3':
-                                                self.cup.status = 'init';
-                                                response.push('Draft-Cup initalisiert für 3on3');
-                                                break;
-                                            case '4on4':
-                                                self.cup.status = 'init';
-                                                response.push('Draft-Cup initialisiert für 4on4');
-                                                break;
-                                            default:
-                                                response.push('Modus nicht bekannt');
-                                                break;
+                                if ( self.hasOwnProperty('cup') ) {
+                                    if ( self.cup.status === 'closed' && self.cup.creator_id === msg.author.id) {
+                                        if (values[1]) {
+                                            switch (values[1]) {
+                                                case '3on3':
+                                                    self.cup.status = 'init';
+                                                    response.push('Draft-Cup initalisiert für 3on3');
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/3));
+                                                    break;
+                                                case '4on4':
+                                                    self.cup.status = 'init';
+                                                    response.push('Draft-Cup initialisiert für 4on4');
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/4));
+                                                    break;
+                                                default:
+                                                    response.push('Modus nicht bekannt');
+                                                    break;
+                                            }
+                                        } else {
+                                            response.push('Bitte Modus angeben: `3on3 | 4on4`');
                                         }
+                                    } else {
+                                        response.push('Draft-Cup befindet sich im Status: `'+self.cup.status+'`');
                                     }
+                                } else {
+                                    response.push('Cup nicht gestartet');
                                 }
                                 break;
                             case 'list':
@@ -79,6 +97,24 @@ exports.DraftCommands = class DraftCommands {
                                             response.push(self.cup.player_list[player].username);
                                         }
                                         response.push('```');
+                                        if ( self.cup.player_list.length < 6 ) {
+                                            response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                                        } else {
+                                            if ( self.cup.player_list.length % 3 === 0 ) {
+                                                response.push('*Anzahl der Spieler ist optimal für 3on3*');
+                                            } else {
+                                                response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                            }
+                                        }
+                                        if ( self.cup.player_list.length < 8 ) {
+                                            response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                                        } else {
+                                            if ( self.cup.player_list.length % 4 === 0 ) {
+                                                response.push('*Anzahl der Spieler ist optimal für 4on4*');
+                                            } else {
+                                                response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                            }
+                                        }
                                     } else {
                                         response.push('Keine Spieler angemeldet');
                                     }
@@ -87,17 +123,29 @@ exports.DraftCommands = class DraftCommands {
                                 }
                                 break;
                             case 'clear':
-                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                                    delete self.cup;
-                                    self.cup = self.getDraftCupMethod();
-                                    self.cup.creator_id = msg.author.id;
-                                    response.push('Alle Daten zurück gesetzt');
+                                if ( self.hasOwnProperty('cup')) {
+                                    if ( self.cup.creator_id === msg.author.id ) {
+                                        delete self.cup;
+                                        self.cup = self.getDraftCupMethod();
+                                        self.cup.creator_id = msg.author.id;
+                                        response.push('Alle Daten zurück gesetzt');
+                                    } else {
+                                        response.push('*Keine Berechtigung*');
+                                    }
+                                } else {
+                                    response.push('Kein Cup gestartet');
                                 }
                                 break;
                             case 'abort':
-                                if ( self.hasOwnProperty('cup') && self.cup.creator_id === msg.author.id ) {
-                                    delete self.cup;
-                                    response.push('Turnier abgebrochen');
+                                if ( self.hasOwnProperty('cup') ) {
+                                    if (self.cup.creator_id === msg.author.id) {
+                                        delete self.cup;
+                                        response.push('Turnier abgebrochen');
+                                    } else {
+                                        response.push('*Keine Berechtigung*');
+                                    }
+                                } else {
+                                    response.push('Kein Cup gestartet');
                                 }
                                 break;
                             default:
@@ -113,15 +161,34 @@ exports.DraftCommands = class DraftCommands {
                 desc: "Anmelden am Draft-Cup",
                 process: function (bot,msg,values) {
                     let response = [];
-                    if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
-                        if ( self.cup.player_list.includes(msg.author)) {
+                    if (self.hasOwnProperty('cup') ) {
+                        if ( self.cup.status === 'open' && self.cup.player_list.includes(msg.author)) {
                             response.push('Du bist bereits angemeldet');
                         } else {
-                            //response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
                             response.push('Du bist nun angemeldet');
+                            //response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
                             self.cup.player_list.push(msg.author);
+
+                            if ( self.cup.player_list.length < 6 ) {
+                                response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                            } else {
+                                if ( self.cup.player_list.length % 3 === 0 ) {
+                                    response.push('*Anzahl der Spieler ist optimal für 3on3*');
+                                } else {
+                                    response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                }
+                            }
+                            if ( self.cup.player_list.length < 8 ) {
+                                response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                            } else {
+                                if ( self.cup.player_list.length % 4 === 0 ) {
+                                    response.push('*Anzahl der Spieler ist optimal für 4on4*');
+                                } else {
+                                    response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                }
+                            }
                         }
-                    } else if (self.hasOwnProperty('cup') && self.cup.status === 'closed') {
+                    } else if (self.cup.status === 'closed') {
                         response.push('Anmeldung bereits geschlossen');
                     } else {
                         response.push('Kein Cup gestartet');
@@ -136,14 +203,33 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     console.log(self);
-                    if (self.hasOwnProperty('cup') && self.cup.status === 'open') {
-                        if ( self.cup.player_list.includes(msg.author)) {
+                    if (self.hasOwnProperty('cup') ) {
+                        if ( self.cup.status === 'open' && self.cup.player_list.includes(msg.author) ) {
                             response.push('Du bist nun abgemeldet');
                             self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author),1);
+
+                            if ( self.cup.player_list.length < 6 ) {
+                                response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                            } else {
+                                if ( self.cup.player_list.length % 3 === 0 ) {
+                                    response.push('*Anzahl der Spieler ist optimal für 3on3*');
+                                } else {
+                                    response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                }
+                            }
+                            if ( self.cup.player_list.length < 8 ) {
+                                response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                            } else {
+                                if ( self.cup.player_list.length % 4 === 0 ) {
+                                    response.push('*Anzahl der Spieler ist optimal für 4on4*');
+                                } else {
+                                    response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                }
+                            }
                         } else {
                             response.push('Du bist nicht angemeldet');
                         }
-                    } else if (self.hasOwnProperty('cup') && self.cup.status === 'closed') {
+                    } else if ( self.cup.status === 'closed' ) {
                         response.push('Anmeldung geschlossen, abmelden ist nicht mehr möglich');
                     } else {
                         response.push('Kein Cup gestartet');
@@ -153,12 +239,24 @@ exports.DraftCommands = class DraftCommands {
                 }
             },
             "captain" : {
-                desc: "Bestimme Team-Leader für den Draft-Cup",
+                desc: "Bestimme Team-Leader für den Draft-Cup `add | remove + @-Mention`",
                 process: function (bot,msg,values) {
                     let response = [];
-                    if ( self.hasOwnProperty('cup')) {
+                    if ( self.hasOwnProperty('cup') ) {
                         if (self.cup.status === 'init' && self.cup.creator_id === msg.author.id) {
-                            response.push(values[0]);
+                            switch (values[0]) {
+                                case 'add':
+                                    response.push('Team-Leader gewählt');
+                                    break;
+                                case 'remove':
+                                    response.push('Team-Leader gelöscht');
+                                    break;
+                                default:
+                                    response.push('Befehl nicht erkannt `add | remove`');
+                                    break;
+                            }
+                            console.log(msg.mentions.users);
+                            console.log(values[1]);
                         } else {
                             response.push('Befehl wurde nicht ausgeführt');
                         }
@@ -166,7 +264,7 @@ exports.DraftCommands = class DraftCommands {
                         response.push('Cup nicht gestartet');
                     }
                     msg.channel.send(response.join('\n'));
-                    console.log('signout by: ' + msg.author.username );
+                    console.log('captain by: ' + msg.author.username );
                 }
             },
             "pick" : {
@@ -180,7 +278,21 @@ exports.DraftCommands = class DraftCommands {
                         response.push('Cup nicht gestartet')
                     }
                     msg.channel.send(response.join('\n'));
-                    console.log('signout by: ' + msg.author.username );
+                    console.log('pick by: ' + msg.author.username );
+                }
+            },
+            "teams" : {
+                desc: "Gewählte Teams",
+                process: function (bot,msg,values) {
+                    let response = [];
+                    if ( self.hasOwnProperty('cup')) {
+                        //Ab hier passiert die Magie
+                        response.push('Darstellung der Teams');
+                    } else {
+                        response.push('Cup nicht gestartet')
+                    }
+                    msg.channel.send(response.join('\n'));
+                    console.log('teams by: ' + msg.author.username );
                 }
             }
         };
@@ -193,6 +305,38 @@ exports.DraftCommands = class DraftCommands {
             'status' : 'open',
             'player_list': []
         };
+    }
+
+    extendDraftCup (team_count) {
+        let extendedCup = {};
+        extendedCup.captain_array = [];
+        for (let i = 0; i < team_count; i++) {
+            console.log(i+1);
+            extendedCup['team_'+(i+1).toString()] = [];
+        }
+    }
+
+    calcRemainingPlayers() {
+        let response = [];
+        if ( self.cup.player_list.length < 6 ) {
+            response.push('*Es fehlen noch '+6-self.cup.player_list.length+' Spieler für 3on3*');
+        } else {
+            if ( self.cup.player_list.length % 3 === 0 ) {
+                response.push('*Anzahl der Spieler ist optimal für 3on3*');
+            } else {
+                response.push('*Es fehlen noch '+3-(self.cup.player_list.length % 3)+' Spieler*');
+            }
+        }
+        if ( self.cup.player_list.length < 8 ) {
+            response.push('*Es fehlen noch '+8-self.cup.player_list.length+' Spieler für 4on4*');
+        } else {
+            if ( self.cup.player_list.length % 4 === 0 ) {
+                response.push('*Anzahl der Spieler ist optimal für 4on4*');
+            } else {
+                response.push('*Es fehlen noch '+4-(self.cup.player_list.length % 4)+' Spieler*');
+            }
+        }
+        return response
     }
 
     getWelcomeMessage() {
