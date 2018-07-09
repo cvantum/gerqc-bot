@@ -67,7 +67,8 @@ exports.DraftCommands = class DraftCommands {
                                                 case '3on3':
                                                     self.cup.status = 'init';
                                                     response.push('Draft-Cup initalisiert für 3on3');
-                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/3));
+                                                    //self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/3));
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(5));
                                                     break;
                                                 case '4on4':
                                                     self.cup.status = 'init';
@@ -78,6 +79,7 @@ exports.DraftCommands = class DraftCommands {
                                                     response.push('Modus nicht bekannt');
                                                     break;
                                             }
+                                            console.log(self.cup);
                                         } else {
                                             response.push('Bitte Modus angeben: `3on3 | 4on4`');
                                         }
@@ -90,7 +92,7 @@ exports.DraftCommands = class DraftCommands {
                                 break;
                             case 'list':
                                 if ( self.hasOwnProperty('cup')) {
-                                    console.log(self.cup.player_list.length);
+                                    //console.log(self.cup.player_list.length);
                                     if ( self.cup.player_list.length > 0 ) {
                                         response.push('```');
                                         for (let player in self.cup.player_list) {
@@ -188,21 +190,17 @@ exports.DraftCommands = class DraftCommands {
                                 }
                             }
                         }
-                    } else if (self.cup.status === 'closed') {
-                        response.push('Anmeldung bereits geschlossen');
                     } else {
                         response.push('Kein Cup gestartet');
                     }
                     msg.channel.send(response.join('\n'));
                     console.log('signup by: ' + msg.author.username );
-                    console.log(self.cup);
                 }
             },
             "signout" : {
                 desc: "Abmelden am Draft-Cup",
                 process: function (bot,msg,values) {
                     let response = [];
-                    console.log(self);
                     if (self.hasOwnProperty('cup') ) {
                         if ( self.cup.status === 'open' && self.cup.player_list.includes(msg.author) ) {
                             response.push('Du bist nun abgemeldet');
@@ -229,8 +227,6 @@ exports.DraftCommands = class DraftCommands {
                         } else {
                             response.push('Du bist nicht angemeldet');
                         }
-                    } else if ( self.cup.status === 'closed' ) {
-                        response.push('Anmeldung geschlossen, abmelden ist nicht mehr möglich');
                     } else {
                         response.push('Kein Cup gestartet');
                     }
@@ -239,24 +235,35 @@ exports.DraftCommands = class DraftCommands {
                 }
             },
             "captain" : {
-                desc: "Bestimme Team-Leader für den Draft-Cup `add | remove + @-Mention`",
+                desc: "Bestimme Team-Leader für den Draft-Cup `add + @-Mention | remove + @-Mention | set`",
                 process: function (bot,msg,values) {
                     let response = [];
                     if ( self.hasOwnProperty('cup') ) {
                         if (self.cup.status === 'init' && self.cup.creator_id === msg.author.id) {
                             switch (values[0]) {
                                 case 'add':
-                                    response.push('Team-Leader gewählt');
+                                    if (msg.mentions.members.array().length > 0) {
+                                        console.log(msg.mentions.members.array()[0].user);
+                                        if ( self.cup.player_list.indexOf(msg.mentions.members.array()[0].user)) {
+                                            response.push('Team-Leader gewählt');
+                                        } else {
+                                            response.push('Spieler nicht gefunden');
+                                        }
+                                    } else {
+                                        response.push('Kein Spieler ausgewählt');
+                                    }
                                     break;
                                 case 'remove':
                                     response.push('Team-Leader gelöscht');
                                     break;
+                                case 'set':
+                                    response.push('Team-Leader gesetzt');
+                                    response.push('Pick-Prozess wird gestartet');
+                                    self.cup.status = 'rostering';
                                 default:
-                                    response.push('Befehl nicht erkannt `add | remove`');
+                                    response.push('Befehl nicht erkannt `add | remove | set`');
                                     break;
                             }
-                            console.log(msg.mentions.users);
-                            console.log(values[1]);
                         } else {
                             response.push('Befehl wurde nicht ausgeführt');
                         }
@@ -273,7 +280,11 @@ exports.DraftCommands = class DraftCommands {
                     let response = [];
                     if ( self.hasOwnProperty('cup')) {
                         //Ab hier passiert die Magie
-                        response.push('Hier wird ausgewählt');
+                        if (self.cup.status === 'rostering') {
+                            response.push('Hier wird ausgewählt');
+                        } else {
+                            response.push('Cup ist noch nicht bereit');
+                        }
                     } else {
                         response.push('Cup nicht gestartet')
                     }
@@ -310,10 +321,17 @@ exports.DraftCommands = class DraftCommands {
     extendDraftCup (team_count) {
         let extendedCup = {};
         extendedCup.captain_array = [];
+        extendedCup.teams = {};
         for (let i = 0; i < team_count; i++) {
             console.log(i+1);
-            extendedCup['team_'+(i+1).toString()] = [];
+            //extendedCup.teams.push({'team_'+(i+1).toString() : []});
+            let temp_team = {};
+            let temp_team_name = 'team_'+(i+1).toString();
+            extendedCup.teams[temp_team_name] = {players: []};
+            //temp_team[temp_team_name] = [];
+            //extendedCup.teams.push(temp_team);
         }
+        return extendedCup;
     }
 
     calcRemainingPlayers() {
