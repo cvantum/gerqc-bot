@@ -57,7 +57,7 @@ exports.CoreCommands = class CoreCommands {
 			"mappool": {
 				desc: "Mappool für Generator",
 				process: function (bot,msg,values) {
-                    const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
+                    const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls'];
 					let response = [];
 					response.push('**Mappool**:');
 					response.push(mappool.join(', '));
