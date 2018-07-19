@@ -19,36 +19,51 @@ exports.QcAPICommands = class QcAPICommands {
                     //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
                     //let response = [];
                     request("https://stats.quake.com/api/v2/Player/Stats?name="+values.join('%20'), (error, response, body) => {
-                        var response = [];
+                        let responseMsg = [];
                         //console.log('body:', body); // Print the HTML for the Google homepage.
                         //console.log(body);
                         //console.log(JSON.parse(body).name);
                         //console.log(values);
                         if (body === '') {
-                            response.push('*Kein Nutzer gefunden*');
+                            responseMsg.push('*Kein Nutzer gefunden*');
                         } else {
                             let qc_data = JSON.parse(body);
-                            response.push('**Stats für: **' + qc_data.name);
-                            response.push('**Level**: `'+qc_data.playerLevelState.level+'`');
-                            response.push('**Duel**');
-                            response.push('```');
-                            response.push('Rating: ' + qc_data.playerRatings.duel.rating + ' ± ' + qc_data.playerRatings.duel.deviation);
-                            response.push('Rank:   ' + self.calcRank(qc_data.playerRatings.duel.rating));
-                            response.push('Spiele: ' + qc_data.playerRatings.duel.gamesCount);
-                            response.push('```');
-                            response.push('**2on2**');
-                            response.push('```');
-                            response.push('Rating: ' + qc_data.playerRatings.tdm.rating + ' ± ' + qc_data.playerRatings.tdm.deviation);
-                            response.push('Rank:   ' + self.calcRank(qc_data.playerRatings.tdm.rating));
-                            response.push('Spiele: ' + qc_data.playerRatings.tdm.gamesCount);
-                            response.push('```');
+                            responseMsg.push('**Stats für: **' + qc_data.name);
+                            responseMsg.push('**Level**: `'+qc_data.playerLevelState.level+'`');
+                            responseMsg.push('**Duel**');
+                            responseMsg.push('```');
+                            responseMsg.push('Rating: ' + qc_data.playerRatings.duel.rating + ' ± ' + qc_data.playerRatings.duel.deviation);
+                            responseMsg.push('Rank:   ' + self.calcRank(qc_data.playerRatings.duel.rating));
+                            responseMsg.push('Spiele: ' + qc_data.playerRatings.duel.gamesCount);
+                            responseMsg.push('```');
+                            responseMsg.push('**2on2**');
+                            responseMsg.push('```');
+                            responseMsg.push('Rating: ' + qc_data.playerRatings.tdm.rating + ' ± ' + qc_data.playerRatings.tdm.deviation);
+                            responseMsg.push('Rank:   ' + self.calcRank(qc_data.playerRatings.tdm.rating));
+                            responseMsg.push('Spiele: ' + qc_data.playerRatings.tdm.gamesCount);
+                            responseMsg.push('```');
                         }
-                        msg.channel.send(response.join('\n'));
+                        msg.channel.send(responseMsg.join('\n'));
                     });
                     //msg.channel.send(response.join('\n'));
                     console.log('rank aufruf by: ' + msg.author.username );
                 }
 
+            },
+            "status" : {
+                desc: "Status von Quake Champions",
+                process: function (bot,msg,values) {
+                    request("https://bethesda.net/de/status/api/statuses", (error, response, body) => {
+                        let responseMsg = [];
+                        if (body === '') {
+                            responseMsg.push('*Keine Daten gefunden*');
+                        } else {
+                            let status_data = JSON.parse(body);
+                        }
+                        msg.channel.send(responseMsg.join('\n'));
+                    });
+                    console.log('status aufruf by: ' + msg.author.username );
+                }
             },
             "lfp" : {
                 desc: "Suche nach Spielern mit ähnlichem SR",
