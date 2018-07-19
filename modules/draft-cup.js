@@ -244,10 +244,16 @@ exports.DraftCommands = class DraftCommands {
                                 case 'add':
                                     if (msg.mentions.members.array().length > 0) {
                                         console.log(msg.mentions.members.array()[0].user);
-                                        if ( self.cup.player_list.indexOf(msg.mentions.members.array()[0].user)) {
-                                            response.push('Team-Leader gewählt');
-                                        } else {
-                                            response.push('Spieler nicht gefunden');
+                                        //console.log(self.cup.player_list);
+                                        //if ( self.cup.player_list.indexOf(msg.mentions.members.array()[0].user)) {
+                                        //    response.push('Team-Leader gewählt');
+                                        //} else {
+                                        //    response.push('Spieler nicht gefunden');
+                                        //}
+                                        for (let key in self.cup.player_list) {
+                                            console.log(key);
+                                            console.log(self.cup.player_list[0].id);
+                                            console.log(msg.mentions.members.array()[0].user.id);
                                         }
                                     } else {
                                         response.push('Kein Spieler ausgewählt');
@@ -323,7 +329,7 @@ exports.DraftCommands = class DraftCommands {
         extendedCup.captain_array = [];
         extendedCup.teams = {};
         for (let i = 0; i < team_count; i++) {
-            console.log(i+1);
+            //console.log(i+1);
             //extendedCup.teams.push({'team_'+(i+1).toString() : []});
             let temp_team = {};
             let temp_team_name = 'team_'+(i+1).toString();
