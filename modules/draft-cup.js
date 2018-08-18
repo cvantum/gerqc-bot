@@ -253,7 +253,7 @@ exports.DraftCommands = class DraftCommands {
                                                 response.push('Team-Leader gewählt');
                                                 self.cup.captain_list[id] = self.cup.player_list[id];
                                                 if (Object.keys(self.cup.captain_list).length == Object.keys(self.cup.teams).length) {
-                                                    response.push('*Anzahl an Team-Leadern erreicht*')
+                                                    response.push('*Anzahl an Team-Leadern erreicht*');
                                                 } else {
                                                     response.push('Es fehlen noch '+(Object.keys(self.cup.teams).length-Object.keys(self.cup.captain_list).length).toString()+' Team-Leader');
                                                 }
@@ -288,9 +288,17 @@ exports.DraftCommands = class DraftCommands {
                                     response.push('```');
                                     break;
                                 case 'set':
-                                    response.push('Team-Leader gesetzt');
-                                    response.push('Pick-Prozess wird gestartet');
-                                    self.cup.status = 'rostering';
+                                    if (Object.keys(self.cup.captain_list).length == Object.keys(self.cup.teams).length) {
+                                        response.push('Team-Leader gesetzt');
+                                        for ( let captain in self.cup.captain_list) {
+                                            delete self.cup.player_list[captain];
+                                        }
+                                        response.push('Pick-Prozess wird gestartet');
+                                        self.cup.status = 'rostering'
+                                    } else {
+                                        response.push('Es fehlen noch '+(Object.keys(self.cup.teams).length-Object.keys(self.cup.captain_list).length).toString()+' Team-Leader');
+                                    }
+;
                                 default:
                                     response.push('Befehl nicht erkannt `add | remove | list | set`');
                                     break;
@@ -312,7 +320,17 @@ exports.DraftCommands = class DraftCommands {
                     if ( self.hasOwnProperty('cup')) {
                         //Ab hier passiert die Magie
                         if (self.cup.status === 'rostering') {
-                            response.push('Hier wird ausgewählt');
+                            if (msg.mentions.members.array().length > 0) {
+                                console.log(msg.mentions.members.array()[0].user.id);
+                                let id = msg.mentions.members.array()[0].user.id;
+                                if (self.cup.player_list.hasOwnProperty(id)) {
+                                    response.push('Hier wird ausgewählt');
+                                } else {
+                                    response.push('Spieler nicht in der Liste');
+                                }
+                            } else {
+                                response.push('Kein Spieler ausgewählt');
+                            }
                         } else {
                             response.push('Cup ist noch nicht bereit');
                         }
