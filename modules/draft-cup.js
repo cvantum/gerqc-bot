@@ -67,13 +67,13 @@ exports.DraftCommands = class DraftCommands {
                                                 case '3on3':
                                                     self.cup.status = 'init';
                                                     response.push('Draft-Cup initalisiert für 3on3');
-                                                    //self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/3));
+                                                    //self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list.keys()/3));
                                                     self.cup = Object.assign(self.cup, self.extendDraftCup(5));
                                                     break;
                                                 case '4on4':
                                                     self.cup.status = 'init';
                                                     response.push('Draft-Cup initialisiert für 4on4');
-                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list/4));
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list.keys()/4));
                                                     break;
                                                 default:
                                                     response.push('Modus nicht bekannt');
@@ -92,29 +92,29 @@ exports.DraftCommands = class DraftCommands {
                                 break;
                             case 'list':
                                 if ( self.hasOwnProperty('cup')) {
-                                    //console.log(self.cup.player_list.length);
-                                    if ( self.cup.player_list.length > 0 ) {
+                                    //console.log(Object.keys(self.cup.player_list).length);
+                                    if ( Object.keys(self.cup.player_list).length > 0 ) {
                                         response.push('```');
                                         for (let player in self.cup.player_list) {
                                             response.push(self.cup.player_list[player].username);
                                         }
                                         response.push('```');
-                                        if ( self.cup.player_list.length < 6 ) {
-                                            response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                                        if ( Object.keys(self.cup.player_list).length < 6 ) {
+                                            response.push('*Es fehlen noch '+(6-Object.keys(self.cup.player_list).length).toString()+' Spieler für 3on3*');
                                         } else {
-                                            if ( self.cup.player_list.length % 3 === 0 ) {
+                                            if ( Object.keys(self.cup.player_list).length % 3 === 0 ) {
                                                 response.push('*Anzahl der Spieler ist optimal für 3on3*');
                                             } else {
-                                                response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                                response.push('*Es fehlen noch '+(3-(Object.keys(self.cup.player_list).length % 3)).toString()+' Spieler für optimale 3er Teams*');
                                             }
                                         }
-                                        if ( self.cup.player_list.length < 8 ) {
-                                            response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                                        if ( Object.keys(self.cup.player_list).length < 8 ) {
+                                            response.push('*Es fehlen noch '+(8-Object.keys(self.cup.player_list).length).toString()+' Spieler für 4on4*');
                                         } else {
-                                            if ( self.cup.player_list.length % 4 === 0 ) {
+                                            if ( Object.keys(self.cup.player_list).length % 4 === 0 ) {
                                                 response.push('*Anzahl der Spieler ist optimal für 4on4*');
                                             } else {
-                                                response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                                response.push('*Es fehlen noch '+(4-(Object.keys(self.cup.player_list).length % 4)).toString()+' Spieler für optimale 4er Teams*');
                                             }
                                         }
                                     } else {
@@ -164,29 +164,30 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     if (self.hasOwnProperty('cup') ) {
-                        if ( self.cup.status === 'open' && self.cup.player_list.includes(msg.author)) {
+                        if ( self.cup.status === 'open' && self.cup.player_list.hasOwnProperty(msg.author.id)) {
                             response.push('Du bist bereits angemeldet');
                         } else {
                             response.push('Du bist nun angemeldet');
                             //response.push(self.getWelcomeMessage().replace('@user', msg.author.username));
-                            self.cup.player_list.push(msg.author);
+                            let id = msg.author.id;
+                            self.cup.player_list[id] = msg.author;
 
-                            if ( self.cup.player_list.length < 6 ) {
-                                response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                            if ( Object.keys(self.cup.player_list).length < 6 ) {
+                                response.push('*Es fehlen noch '+(6-Object.keys(self.cup.player_list).length).toString()+' Spieler für 3on3*');
                             } else {
-                                if ( self.cup.player_list.length % 3 === 0 ) {
+                                if ( Object.keys(self.cup.player_list).length % 3 === 0 ) {
                                     response.push('*Anzahl der Spieler ist optimal für 3on3*');
                                 } else {
-                                    response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                    response.push('*Es fehlen noch '+(3-(Object.keys(self.cup.player_list).length % 3)).toString()+' Spieler für optimale 3er Teams*');
                                 }
                             }
-                            if ( self.cup.player_list.length < 8 ) {
-                                response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                            if ( Object.keys(self.cup.player_list).length < 8 ) {
+                                response.push('*Es fehlen noch '+(8-Object.keys(self.cup.player_list).length).toString()+' Spieler für 4on4*');
                             } else {
-                                if ( self.cup.player_list.length % 4 === 0 ) {
+                                if ( Object.keys(self.cup.player_list).length % 4 === 0 ) {
                                     response.push('*Anzahl der Spieler ist optimal für 4on4*');
                                 } else {
-                                    response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                    response.push('*Es fehlen noch '+(4-(Object.keys(self.cup.player_list).length % 4)).toString()+' Spieler für optimale 4er Teams*');
                                 }
                             }
                         }
@@ -202,26 +203,26 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     if (self.hasOwnProperty('cup') ) {
-                        if ( self.cup.status === 'open' && self.cup.player_list.includes(msg.author) ) {
+                        if ( self.cup.status === 'open' && self.cup.player_list.hasOwnProperty(msg.author.id) ) {
                             response.push('Du bist nun abgemeldet');
-                            self.cup.player_list.splice(self.cup.player_list.indexOf(msg.author),1);
+                            delete self.cup.player_list[msg.author.id];
 
-                            if ( self.cup.player_list.length < 6 ) {
-                                response.push('*Es fehlen noch '+(6-self.cup.player_list.length).toString()+' Spieler für 3on3*');
+                            if ( Object.keys(self.cup.player_list).length < 6 ) {
+                                response.push('*Es fehlen noch '+(6-Object.keys(self.cup.player_list).length).toString()+' Spieler für 3on3*');
                             } else {
-                                if ( self.cup.player_list.length % 3 === 0 ) {
+                                if ( Object.keys(self.cup.player_list).length % 3 === 0 ) {
                                     response.push('*Anzahl der Spieler ist optimal für 3on3*');
                                 } else {
-                                    response.push('*Es fehlen noch '+(3-(self.cup.player_list.length % 3)).toString()+' Spieler für optimale 3er Teams*');
+                                    response.push('*Es fehlen noch '+(3-(Object.keys(self.cup.player_list).length % 3)).toString()+' Spieler für optimale 3er Teams*');
                                 }
                             }
-                            if ( self.cup.player_list.length < 8 ) {
-                                response.push('*Es fehlen noch '+(8-self.cup.player_list.length).toString()+' Spieler für 4on4*');
+                            if ( Object.keys(self.cup.player_list).length < 8 ) {
+                                response.push('*Es fehlen noch '+(8-Object.keys(self.cup.player_list).length).toString()+' Spieler für 4on4*');
                             } else {
-                                if ( self.cup.player_list.length % 4 === 0 ) {
+                                if ( Object.keys(self.cup.player_list).length % 4 === 0 ) {
                                     response.push('*Anzahl der Spieler ist optimal für 4on4*');
                                 } else {
-                                    response.push('*Es fehlen noch '+(4-(self.cup.player_list.length % 4)).toString()+' Spieler für optimale 4er Teams*');
+                                    response.push('*Es fehlen noch '+(4-(Object.keys(self.cup.player_list).length % 4)).toString()+' Spieler für optimale 4er Teams*');
                                 }
                             }
                         } else {
@@ -243,31 +244,55 @@ exports.DraftCommands = class DraftCommands {
                             switch (values[0]) {
                                 case 'add':
                                     if (msg.mentions.members.array().length > 0) {
-                                        console.log(msg.mentions.members.array()[0].user);
-                                        //console.log(self.cup.player_list);
-                                        //if ( self.cup.player_list.indexOf(msg.mentions.members.array()[0].user)) {
-                                        //    response.push('Team-Leader gewählt');
-                                        //} else {
-                                        //    response.push('Spieler nicht gefunden');
-                                        //}
-                                        for (let key in self.cup.player_list) {
-                                            console.log(key);
-                                            console.log(self.cup.player_list[0].id);
-                                            console.log(msg.mentions.members.array()[0].user.id);
+                                        console.log(msg.mentions.members.array()[0].user.id);
+                                        let id = msg.mentions.members.array()[0].user.id;
+                                        if (self.cup.player_list.hasOwnProperty(id)) {
+                                            if (self.cup.captain_list.hasOwnProperty(id)) {
+                                                response.push('Team-Leader bereits gewählt');
+                                            } else {
+                                                response.push('Team-Leader gewählt');
+                                                self.cup.captain_list[id] = self.cup.player_list[id];
+                                                if (Object.keys(self.cup.captain_list).length == Object.keys(self.cup.teams).length) {
+                                                    response.push('*Anzahl an Team-Leadern erreicht*')
+                                                } else {
+                                                    response.push('Es fehlen noch '+(Object.keys(self.cup.teams).length-Object.keys(self.cup.captain_list).length).toString()+' Team-Leader');
+                                                }
+                                            }
+                                        } else {
+                                            response.push('Spieler nicht in der Liste');
                                         }
                                     } else {
                                         response.push('Kein Spieler ausgewählt');
                                     }
                                     break;
                                 case 'remove':
-                                    response.push('Team-Leader gelöscht');
+                                    if (msg.mentions.members.array().length > 0) {
+                                        console.log(msg.mentions.members.array()[0].user.id);
+                                        let id = msg.mentions.members.array()[0].user.id;
+                                        if (self.cup.captain_list.hasOwnProperty(id)) {
+                                            delete self.cup.captain_list[id];
+                                            response.push('Team-Leader gelöscht');
+                                        } else {
+                                            response.push('Spieler nicht in der Liste');
+                                        }
+                                    } else {
+                                        response.push('Kein Spieler ausgewählt');
+                                    }
+                                    break;
+                                case 'list':
+                                    response.push('**Gewählte Team-Leader**');
+                                    response.push('```');
+                                    for ( let key in self.cup.captain_list) {
+                                        response.push(self.cup.captain_list[key].username);
+                                    }
+                                    response.push('```');
                                     break;
                                 case 'set':
                                     response.push('Team-Leader gesetzt');
                                     response.push('Pick-Prozess wird gestartet');
                                     self.cup.status = 'rostering';
                                 default:
-                                    response.push('Befehl nicht erkannt `add | remove | set`');
+                                    response.push('Befehl nicht erkannt `add | remove | list | set`');
                                     break;
                             }
                         } else {
@@ -320,13 +345,13 @@ exports.DraftCommands = class DraftCommands {
         return {
             'creator_id' : '',
             'status' : 'open',
-            'player_list': []
+            'player_list': {}
         };
     }
 
     extendDraftCup (team_count) {
         let extendedCup = {};
-        extendedCup.captain_array = [];
+        extendedCup.captain_list = {};
         extendedCup.teams = {};
         for (let i = 0; i < team_count; i++) {
             //console.log(i+1);
@@ -338,29 +363,6 @@ exports.DraftCommands = class DraftCommands {
             //extendedCup.teams.push(temp_team);
         }
         return extendedCup;
-    }
-
-    calcRemainingPlayers() {
-        let response = [];
-        if ( self.cup.player_list.length < 6 ) {
-            response.push('*Es fehlen noch '+6-self.cup.player_list.length+' Spieler für 3on3*');
-        } else {
-            if ( self.cup.player_list.length % 3 === 0 ) {
-                response.push('*Anzahl der Spieler ist optimal für 3on3*');
-            } else {
-                response.push('*Es fehlen noch '+3-(self.cup.player_list.length % 3)+' Spieler*');
-            }
-        }
-        if ( self.cup.player_list.length < 8 ) {
-            response.push('*Es fehlen noch '+8-self.cup.player_list.length+' Spieler für 4on4*');
-        } else {
-            if ( self.cup.player_list.length % 4 === 0 ) {
-                response.push('*Anzahl der Spieler ist optimal für 4on4*');
-            } else {
-                response.push('*Es fehlen noch '+4-(self.cup.player_list.length % 4)+' Spieler*');
-            }
-        }
-        return response
     }
 
     getWelcomeMessage() {
