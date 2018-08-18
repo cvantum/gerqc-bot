@@ -59,6 +59,13 @@ exports.QcAPICommands = class QcAPICommands {
                             responseMsg.push('*Keine Daten gefunden*');
                         } else {
                             let status_data = JSON.parse(body);
+                            responseMsg.push('**Quake Champions Status-Update**');
+                            for ( let game in status_data.components) {
+                                if ( status_data.components[game].name === "Quake Champions") {
+                                    responseMsg.push('Server-Status: `'+status_data.components[game].status+'`');
+                                    responseMsg.push('Letzes Status-Update: `'+status_data.components[game].updated_at+'`');
+                                }
+                            }
                         }
                         msg.channel.send(responseMsg.join('\n'));
                     });
@@ -86,53 +93,53 @@ exports.QcAPICommands = class QcAPICommands {
              sr = Number(sr);
         }
         //Bronze: 0 - 974
-        if (sr < 975) {
-            if ( sr < 675) {
+        if (sr < 1075) {
+            if ( sr < 775) {
                 return 'Bronze Tier 1';
-            } else if ( sr < 750 ) {
+            } else if ( sr < 850 ) {
                 return 'Bronze Tier 2';
-            } else if ( sr < 825) {
+            } else if ( sr < 925) {
                 return 'Bronze Tier 3';
-            } else if ( sr < 900) {
+            } else if ( sr < 1000) {
                 return 'Bronze Tier 4';
             } else {
                 return 'Bronze Tier 5';
             }
         //Silber: 975 - 1349
-        } else if (sr < 1350) {
-            if ( sr < 1050) {
+        } else if (sr < 1450) {
+            if ( sr < 1150) {
                 return 'Silber Tier 1';
-            } else if ( sr < 1125) {
+            } else if ( sr < 1225) {
                 return 'Silber Tier 2';
-            } else if ( sr < 1200) {
+            } else if ( sr < 1300) {
                 return 'Silber Tier 3';
-            } else if ( sr < 1275) {
+            } else if ( sr < 1375) {
                 return 'Silber Tier 4';
             } else {
                 return 'Silber Tier 5';
             }
         //Gold: 1350 - 1724
-        } else if ( sr < 1725) {
-            if ( sr < 1425) {
+        } else if ( sr < 1825) {
+            if ( sr < 1525) {
                 return 'Gold Tier 1';
-            } else if ( sr < 1500) {
+            } else if ( sr < 1600) {
                 return 'Gold Tier 2';
-            } else if ( sr < 1575) {
+            } else if ( sr < 1675) {
                 return 'Gold Tier 3';
-            } else if ( sr < 1650 ) {
+            } else if ( sr < 1750 ) {
                 return 'Gold Tier 4';
             } else {
                 return 'Gold Tier 5';
             }
         //Diamond: 1725 - 2099
-        } else if ( sr < 2100) {
-            if ( sr < 1800) {
+        } else if ( sr < 2200) {
+            if ( sr < 1900) {
                 return 'Diamond Tier 1';
-            } else if ( sr < 1870) {
+            } else if ( sr < 1970) {
                 return 'Diamond Tier 2';
-            } else if ( sr < 1950) {
+            } else if ( sr < 2050) {
                 return 'Diamond Tier 3';
-            } else if ( sr < 2025) {
+            } else if ( sr < 2125) {
                 return 'Diamond Tier 4';
             } else {
                 return 'Diamond Tier 5';
