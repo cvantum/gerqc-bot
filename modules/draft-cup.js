@@ -68,7 +68,7 @@ exports.DraftCommands = class DraftCommands {
                                                     self.cup.status = 'init';
                                                     response.push('Draft-Cup initalisiert für 3on3');
                                                     //self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list.keys()/3));
-                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(5));
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(1));
                                                     break;
                                                 case '4on4':
                                                     self.cup.status = 'init';
@@ -252,7 +252,7 @@ exports.DraftCommands = class DraftCommands {
                                             } else {
                                                 response.push('Team-Leader gewählt');
                                                 self.cup.captain_list[id] = self.cup.player_list[id];
-                                                if (Object.keys(self.cup.captain_list).length == Object.keys(self.cup.teams).length) {
+                                                if (Object.keys(self.cup.captain_list).length === Object.keys(self.cup.teams).length) {
                                                     response.push('*Anzahl an Team-Leadern erreicht*');
                                                 } else {
                                                     response.push('Es fehlen noch '+(Object.keys(self.cup.teams).length-Object.keys(self.cup.captain_list).length).toString()+' Team-Leader');
@@ -288,17 +288,18 @@ exports.DraftCommands = class DraftCommands {
                                     response.push('```');
                                     break;
                                 case 'set':
-                                    if (Object.keys(self.cup.captain_list).length == Object.keys(self.cup.teams).length) {
+                                    if (Object.keys(self.cup.captain_list).length === Object.keys(self.cup.teams).length) {
                                         response.push('Team-Leader gesetzt');
                                         for ( let captain in self.cup.captain_list) {
                                             delete self.cup.player_list[captain];
                                         }
+                                        console.log(self.cup.captain_list);
                                         response.push('Pick-Prozess wird gestartet');
                                         self.cup.status = 'rostering'
                                     } else {
                                         response.push('Es fehlen noch '+(Object.keys(self.cup.teams).length-Object.keys(self.cup.captain_list).length).toString()+' Team-Leader');
                                     }
-;
+                                    break;
                                 default:
                                     response.push('Befehl nicht erkannt `add | remove | list | set`');
                                     break;
@@ -324,7 +325,45 @@ exports.DraftCommands = class DraftCommands {
                                 console.log(msg.mentions.members.array()[0].user.id);
                                 let id = msg.mentions.members.array()[0].user.id;
                                 if (self.cup.player_list.hasOwnProperty(id)) {
+                                    // Ab hier findet die Wahl der Spieler statt
                                     response.push('Hier wird ausgewählt');
+                                    //Es darf nur derjenige Wählen, der auch an der Reihe ist
+                                    if (msg.author.id === Object.keys(self.cup.captain)[self.cup.team_pick]) {
+                                        //Abfrage, ob hoch oder runter gezählt wird
+                                        switch (self.cup.count_mode) {
+                                            case 'count_up':
+                                                //Wird mit dem nächsten Wähler die Länger aller Teams erreicht
+                                                //muss runter gezählt werden
+                                                if (self.cup.team_next_pick + 1 >= Object.keys(self.cup.captain_list).length) {
+                                                    self.cup.team_pick = self.cup.team_next_pick;
+                                                    self.cup.count_mode = 'count_down';
+                                                } else {
+                                                    self.cup.team_pick = self.cup.team_next_pick;
+                                                    self.cup.team_next_pick = self.cup.team_next_pick + 1;
+                                                }
+                                                break;
+                                            case 'count_down':
+                                                //Wird mit dem nächsten Wähler die Zahl Null erreicht
+                                                //muss wieder hoch gezählt werden
+                                                if (self.cup.team_next_pick - 1 < 0) {
+                                                    self.cup.team_pick = self.cup.team_next_pick;
+                                                    self.cup.count_mode = 'count_up';
+                                                } else {
+                                                    self.cup.team_pick = self.cup.team_next_pick;
+                                                    self.cup.team_pick = self.cup.team_next_pick - 1;
+                                                }
+                                                break;
+                                        }
+                                    } else {
+                                        response.push('Du bist nicht dran');
+                                    }
+                                    // Nach der Wahl wird geprüft, ob noch Spieler im Pool verfügbar sind
+                                    if ( self.cup.player_list.length > 0) {
+                                        response.push('Nächster ist an der Reihe');
+                                    } else {
+                                        response.push('Alle Spieler wurden gewählt');
+                                        // Nächster Status muss gesetzt werden.
+                                    }
                                 } else {
                                     response.push('Spieler nicht in der Liste');
                                 }
@@ -346,8 +385,19 @@ exports.DraftCommands = class DraftCommands {
                 process: function (bot,msg,values) {
                     let response = [];
                     if ( self.hasOwnProperty('cup')) {
-                        //Ab hier passiert die Magie
-                        response.push('Darstellung der Teams');
+                        if (self.cup.status === 'rostering') {
+                            //Ab hier passiert die Magie
+                            response.push('Gewählte Teams');
+                            for (let team in self.cup.teams) {
+                                console.log(team);
+                                console.log(self.cup.teams[team]);
+                                response.push('Team:');
+                                response.push('Team-Leader');
+                                response.push('Spieler');
+                            }
+                        } else {
+                            response.push('Nicht möglich. Cup befindet sich im Status: `'+self.cup.status+'`');
+                        }
                     } else {
                         response.push('Cup nicht gestartet')
                     }
@@ -371,6 +421,10 @@ exports.DraftCommands = class DraftCommands {
         let extendedCup = {};
         extendedCup.captain_list = {};
         extendedCup.teams = {};
+        extendedCup.count_mode = 'count_up';
+        extendedCup.team_pick = 0;
+        extendedCup.team_next_pick = 1;
+        extendedCup.pick_count = 1;
         for (let i = 0; i < team_count; i++) {
             //console.log(i+1);
             //extendedCup.teams.push({'team_'+(i+1).toString() : []});
