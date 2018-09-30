@@ -47,7 +47,7 @@ exports.CoreCommands = class CoreCommands {
 			"map": {
 				desc: "Random-Map aus Mappool",
 				process: function (bot,msg,values) {
-					const mappool = ['Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath','Awoken'];
+					const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls'];
 					let response = [];
 					response.push('Die Map ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
 					msg.channel.send(response.join('\n'));
@@ -66,7 +66,7 @@ exports.CoreCommands = class CoreCommands {
                 }
 			},
 			"duelchamps" : {
-				desc: "Genrator für drei Champions in Duel",
+				desc: "Generator für drei Champions in Duel",
 				process: function (bot,msg,values) {
 					const champpool = [
 						'Anarki',
@@ -74,15 +74,15 @@ exports.CoreCommands = class CoreCommands {
 						'Slash',
 						'Keel',
 						'Visor',
-						'Slash',
 						'Ranger',
-						'Doom Guy',
+						'Doom Slayer',
 						'Scalebearer',
 						'Nyx',
 						'Clutch',
 						'Galena',
 						'B.J. Blazkowicz',
-						'Strogg and Peeker'
+						'Strogg and Peeker',
+                        'Death Knight'
 					];
 					let response = [];
 					response.push('**Champions-Auswahl für Duel**');

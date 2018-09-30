@@ -63,7 +63,7 @@ exports.QcAPICommands = class QcAPICommands {
                             for ( let game in status_data.components) {
                                 if ( status_data.components[game].name === "Quake Champions") {
                                     responseMsg.push('Server-Status: `'+status_data.components[game].status+'`');
-                                    responseMsg.push('Letzes Status-Update: `'+status_data.components[game].updated_at+'`');
+                                    responseMsg.push('Letztes Status-Update: `'+status_data.components[game].updated_at+'`');
                                 }
                             }
                         }
@@ -72,7 +72,7 @@ exports.QcAPICommands = class QcAPICommands {
                     console.log('status aufruf by: ' + msg.author.username );
                 }
             },
-            "lfp" : {
+ /**           "lfp" : {
                 desc: "Suche nach Spielern mit ähnlichem SR",
                 process: function (bot,msg,values) {
                     if (values[0] === 'duel') {
@@ -87,7 +87,7 @@ exports.QcAPICommands = class QcAPICommands {
             }
         };
     }
-
+**/
     calcRank(sr) {
         if (typeof sr === 'string') {
              sr = Number(sr);
