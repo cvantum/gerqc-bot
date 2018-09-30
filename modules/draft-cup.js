@@ -10,11 +10,11 @@ exports.DraftCommands = class DraftCommands {
         let self = this;
         return {
             "draft" : {
-                desc: "Draft-Cup start | stop | clear | help | close | reopen | abort | list",
+                desc: "Draft-Cup `help | start | close | reopen | init | list | clear | abort`",
                 process: function (bot,msg,values) {
                     let response = [];
                     if (values.length === 0) {
-                        response.push('Bitte Parameter angeben: `help | start | close | reopen | abort | clear | list`');
+                        response.push('Bitte Parameter angeben: `help | start | close | reopen | init | list | clear | abort`');
                     } else {
                         switch (values[0]) {
                             case 'help':
@@ -23,6 +23,7 @@ exports.DraftCommands = class DraftCommands {
                                 response.push('start:  Starte einen neuen Draft-Cup');
                                 response.push('close:  Schließe die Anmeldung');
                                 response.push('reopen: Öffne die Anmeldung erneut');
+                                response.push('init:   Initialisiere Cup für 3on3 oder 4on4');
                                 response.push('list:   Auflistung aller Spieler');
                                 response.push('abort:  Abbrechen des Vorgangs');
                                 response.push('clear:  Reset der bisherigen Daten');
@@ -67,8 +68,8 @@ exports.DraftCommands = class DraftCommands {
                                                 case '3on3':
                                                     self.cup.status = 'init';
                                                     response.push('Draft-Cup initalisiert für 3on3');
-                                                    //self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list.keys()/3));
-                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(1));
+                                                    self.cup = Object.assign(self.cup, self.extendDraftCup(self.cup.player_list.keys()/3));
+                                                    //self.cup = Object.assign(self.cup, self.extendDraftCup(1));
                                                     break;
                                                 case '4on4':
                                                     self.cup.status = 'init';
@@ -236,12 +237,21 @@ exports.DraftCommands = class DraftCommands {
                 }
             },
             "captain" : {
-                desc: "Bestimme Team-Leader für den Draft-Cup `add + @-Mention | remove + @-Mention | set`",
+                desc: "Bestimme Team-Leader für den Draft-Cup `add + @-Erwähnung | remove + @-Erwähnung | set | list`",
                 process: function (bot,msg,values) {
                     let response = [];
                     if ( self.hasOwnProperty('cup') ) {
                         if (self.cup.status === 'init' && self.cup.creator_id === msg.author.id) {
                             switch (values[0]) {
+                                case 'help':
+                                    response.push('```');
+                                    response.push('help:   Diese Hilfe');
+                                    response.push('add:    Team-Leader wählen + @-Erwähnung');
+                                    response.push('remove: Team-Leader löschen + @-Erwähnung');
+                                    response.push('set:    Team-Leader auswahl abschließen');
+                                    response.push('list:   Liste gewählter Team-Leader');
+                                    response.push('```');
+                                    break;
                                 case 'add':
                                     if (msg.mentions.members.array().length > 0) {
                                         console.log(msg.mentions.members.array()[0].user.id);
@@ -315,7 +325,7 @@ exports.DraftCommands = class DraftCommands {
                 }
             },
             "pick" : {
-                desc: "Wähle einen Spieler aus",
+                desc: "Wähle einen Spieler aus `+ @-Erwähnung`",
                 process: function (bot,msg,values) {
                     let response = [];
                     if ( self.hasOwnProperty('cup')) {
