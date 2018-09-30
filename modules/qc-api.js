@@ -85,9 +85,9 @@ exports.QcAPICommands = class QcAPICommands {
                     console.log('lfp aufruf by: ' + msg.author.username );
                 }
             }
+  **/
         };
     }
-**/
     calcRank(sr) {
         if (typeof sr === 'string') {
              sr = Number(sr);
