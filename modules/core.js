@@ -44,10 +44,20 @@ exports.CoreCommands = class CoreCommands {
                     console.log('info abfrage by: ' + msg.author.username );
                 }
             },
+            "randommode": {
+                desc: "Random-Mode Generator",
+                process: function (bot,msg,values) {
+                    const mappool = ['Team Deathmatch','Sacrifice','Team Instagib','Slipgate','Unholy Trinity TDM'];
+                    let response = [];
+                    response.push('Der Mode ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
+                    msg.channel.send(response.join('\n'));
+                    console.log('Mappool-Abfrage für '+msg.author.username);
+                }
+            },
 			"map": {
 				desc: "Random-Map aus Mappool",
 				process: function (bot,msg,values) {
-					const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls'];
+                    const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls', 'Lockbox', 'Burial Chamber', 'Church of Azatoth', 'Tempest Shrine'];
 					let response = [];
 					response.push('Die Map ist: **'+mappool[Math.floor(Math.random() * mappool.length)]+'**');
 					msg.channel.send(response.join('\n'));
@@ -57,7 +67,7 @@ exports.CoreCommands = class CoreCommands {
 			"mappool": {
 				desc: "Mappool für Generator",
 				process: function (bot,msg,values) {
-                    const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls'];
+                    const mappool = ['Awoken', 'Blood Covenant','Blood Run', 'Corrupted Keep', 'Ruins of Sarnath', 'Vale of Pnath', 'The Molten Falls', 'Lockbox', 'Burial Chamber', 'Church of Azatoth', 'Tempest Shrine'];
 					let response = [];
 					response.push('**Mappool**:');
 					response.push(mappool.join(', '));

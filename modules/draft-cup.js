@@ -60,6 +60,21 @@ exports.DraftCommands = class DraftCommands {
                                     response.push('Kein Cup gestartet');
                                 }
                                 break;
+                            case 'invite':
+                                if ( self.hasOwnProperty('cup') ) {
+                                    if (self.cup.status === 'open' && self.cup.creator_id === msg.author.id) {
+                                        if (msg.mentions.members.array().length > 0) {
+                                            console.log(msg.mentions.members.array()[0].user.id);
+                                            let id = msg.mentions.members.array()[0].user.id;
+                                            console.log(id);
+                                            self.cup.player_list[id] = id;
+                                            response.push('Done');
+                                        }
+                                    }
+                                } else {
+                                    response.push('Kein Cup gestartet');
+                                }
+                                break;
                             case 'init':
                                 if ( self.hasOwnProperty('cup') ) {
                                     if ( self.cup.status === 'closed' && self.cup.creator_id === msg.author.id) {
@@ -356,7 +371,7 @@ exports.DraftCommands = class DraftCommands {
                                 let id = msg.mentions.members.array()[0].user.id;
                                 if (self.cup.player_list.hasOwnProperty(id)) {
                                     // Ab hier findet die Wahl der Spieler statt
-                                    response.push('Hier wird ausgewählt');
+                                    //response.push('Hier wird ausgewählt');
                                     //Es darf nur derjenige Wählen, der auch an der Reihe ist
                                     if (msg.author.id === Object.keys(self.cup.captain)[self.cup.team_pick]) {
                                         //Abfrage, ob hoch oder runter gezählt wird
@@ -425,10 +440,11 @@ exports.DraftCommands = class DraftCommands {
                             //Ab hier passiert die Magie
                             response.push('Gewählte Teams');
                             for (let team in self.cup.teams) {
-                                console.log(team);
-                                console.log(self.cup.teams[team]);
+                                //console.log(team);
+                                //console.log(self.cup.teams[team]);
+                                let captain = Object.keys(self.cup.teams[team]['players'])[0];
                                 response.push('Team: '+team);
-                                response.push('Team-Leader: '+self.cup.teams[team]['players'][0].username);
+                                response.push('Team-Leader: '+self.cup.teams[team]['players'][captain].username);
                                 response.push('Vollständiger Kader:');
                                 response.push('```');
                                 for (let players in self.cup.teams[team]['players']) {
