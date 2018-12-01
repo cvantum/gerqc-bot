@@ -44,6 +44,18 @@ exports.CoreCommands = class CoreCommands {
                     console.log('info abfrage by: ' + msg.author.username );
                 }
             },
+            "türchen": {
+				desc: "Öffnet das Türchen vom Adventskalender",
+					process: function (bot,msg,values) {
+					const advent_group = msg.guild.roles.find('id','518372566755311626').members.array();
+					//advent_group[0] = 'cvantum';
+					let response = [];
+					//console.log(msg.guild.roles.find('id','518372566755311626').members.array());
+					response.push('Gewinner des Tages ist: **'+advent_group[Math.floor(Math.random() * advent_group.length)]+'**');
+					msg.channel.send(response.join('\n'));
+					console.log('Türchen geöffnet für '+msg.author.username);
+				}
+        	},
             "randommode": {
                 desc: "Random-Mode Generator",
                 process: function (bot,msg,values) {
@@ -92,7 +104,9 @@ exports.CoreCommands = class CoreCommands {
 						'Galena',
 						'B.J. Blazkowicz',
 						'Strogg and Peeker',
-                        'Death Knight'
+                        'Death Knight',
+						'Athena',
+						'Eisen'
 					];
 					let response = [];
 					response.push('**Champions-Auswahl für Duel**');
