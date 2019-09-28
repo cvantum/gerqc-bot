@@ -37,7 +37,6 @@ exports.ToorAPICommands = class ToorAPICommands {
                                 //console.log(match_data);
                                 responseMsg.push('Spiele für: '+values[0]);
                                 for (let match_id in match_data) {
-                                    console.log(match_id);
                                     responseMsg.push('**Match-Nr.:** '+ match_id.toString() );
                                     responseMsg.push('> :game_die: Status: **'+match_data[match_id]['status']+'**');
                                     if (match_data[match_id]['scheduled_datetime'] === null) {
@@ -59,6 +58,171 @@ exports.ToorAPICommands = class ToorAPICommands {
                     console.log('matches aufruf by: ' + msg.author.username );
                 }
             },
+            "div1" : {
+                desc: "Division 1",
+                process: function (bot, msg, values) {
+                    let options = {
+                        url: 'https://api.toornament.com/viewer/v2/tournaments/' + self.config.toornament_cupid + '/stages/2893116271035482112/ranking-items',
+                        headers: {
+                            'X-Api-Key': self.config.toornament_token,
+                            'Range': 'items=0-40'
+                        }
+                    };
+                    request(options, (error, response, body) => {
+                        let responseMsg = [];
+                        if (body === '') {
+                            responseMsg.push('*Keine Daten gefunden*');
+                        } else {
+                            let div_data = JSON.parse(body);
+                            //console.log(div_data);
+                            responseMsg.push('**Division 1**');
+                            responseMsg.push('```');
+                            responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
+                            for (let player in div_data) {
+                                let rank = div_data[player]['position'].toString();
+                                let name = div_data[player]['participant']['name'];
+                                //let points = div_data[player]['points'].toString();
+                                let points = '0';
+                                let wins = div_data[player]['properties']['wins'].toString();
+                                let losses = div_data[player]['properties']['losses'].toString();
+                                let total = div_data[player]['properties']['played'].toString();
+                                // Rank fill with spaces
+                                let rank_space_fill = 5 - rank.length;
+                                let rank_spaces = Array(rank_space_fill).fill(' ').join('');
+                                // Name fill with spaces
+                                let name_space_fill = 20 - name.length;
+                                let name_spaces = Array(name_space_fill).fill(' ').join('');
+                                // Points fill with spaces
+                                let points_space_fill = 7 - points.length;
+                                let points_spaces = Array(points_space_fill).fill(' ').join('');
+                                // Wins fill with spaces
+                                let wins_space_fill = 3 - wins.length;
+                                let wins_spaces = Array(wins_space_fill).fill(' ').join('');
+                                // Losses fill with spaces
+                                let losses_space_fill = 3 - losses.length;
+                                let losses_spaces = Array(losses_space_fill).fill(' ').join('');
+                                // Total fill with spaces
+                                let total_space_fill = 3 - total.length;
+                                let total_spaces = Array(total_space_fill).fill(' ').join('');
+                                responseMsg.push('| '+rank+rank_spaces+' | '+name+name_spaces+' | '+points+points_spaces+' | '+wins+wins_spaces+' | '+losses+losses_spaces+' | '+total+total_spaces+' |');
+                            }
+                            responseMsg.push('```');
+                        }
+                        msg.channel.send(responseMsg.join('\n'));
+                    });
+                    console.log('div1 aufruf by: ' + msg.author.username);
+                }
+            },
+            "div2" : {
+                desc: "Division 2",
+                process: function (bot, msg, values) {
+                    let options = {
+                        url: 'https://api.toornament.com/viewer/v2/tournaments/' + self.config.toornament_cupid + '/stages/2893113189662072832/ranking-items',
+                        headers: {
+                            'X-Api-Key': self.config.toornament_token,
+                            'Range': 'items=0-40'
+                        }
+                    };
+                    request(options, (error, response, body) => {
+                        let responseMsg = [];
+                        if (body === '') {
+                            responseMsg.push('*Keine Daten gefunden*');
+                        } else {
+                            let div_data = JSON.parse(body);
+                            //console.log(div_data);
+                            responseMsg.push('**Division 2**');
+                            responseMsg.push('```');
+                            responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
+                            for (let player in div_data) {
+                                let rank = div_data[player]['position'].toString();
+                                let name = div_data[player]['participant']['name'];
+                                //let points = div_data[player]['points'].toString();
+                                let points = '0';
+                                let wins = div_data[player]['properties']['wins'].toString();
+                                let losses = div_data[player]['properties']['losses'].toString();
+                                let total = div_data[player]['properties']['played'].toString();
+                                // Rank fill with spaces
+                                let rank_space_fill = 5 - rank.length;
+                                let rank_spaces = Array(rank_space_fill).fill(' ').join('');
+                                // Name fill with spaces
+                                let name_space_fill = 20 - name.length;
+                                let name_spaces = Array(name_space_fill).fill(' ').join('');
+                                // Points fill with spaces
+                                let points_space_fill = 7 - points.length;
+                                let points_spaces = Array(points_space_fill).fill(' ').join('');
+                                // Wins fill with spaces
+                                let wins_space_fill = 3 - wins.length;
+                                let wins_spaces = Array(wins_space_fill).fill(' ').join('');
+                                // Losses fill with spaces
+                                let losses_space_fill = 3 - losses.length;
+                                let losses_spaces = Array(losses_space_fill).fill(' ').join('');
+                                // Total fill with spaces
+                                let total_space_fill = 3 - total.length;
+                                let total_spaces = Array(total_space_fill).fill(' ').join('');
+                                responseMsg.push('| '+rank+rank_spaces+' | '+name+name_spaces+' | '+points+points_spaces+' | '+wins+wins_spaces+' | '+losses+losses_spaces+' | '+total+total_spaces+' |');
+                            }
+                            responseMsg.push('```');
+                        }
+                        msg.channel.send(responseMsg.join('\n'));
+                    });
+                    console.log('div1 aufruf by: ' + msg.author.username);
+                }
+            },
+            "div3" : {
+                desc: "Division 3",
+                process: function (bot, msg, values) {
+                    let options = {
+                        url: 'https://api.toornament.com/viewer/v2/tournaments/' + self.config.toornament_cupid + '/stages/2893111794650316800/ranking-items',
+                        headers: {
+                            'X-Api-Key': self.config.toornament_token,
+                            'Range': 'items=0-40'
+                        }
+                    };
+                    request(options, (error, response, body) => {
+                        let responseMsg = [];
+                        if (body === '') {
+                            responseMsg.push('*Keine Daten gefunden*');
+                        } else {
+                            let div_data = JSON.parse(body);
+                            //console.log(div_data);
+                            responseMsg.push('**Division 3**');
+                            responseMsg.push('```');
+                            responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
+                            for (let player in div_data) {
+                                let rank = div_data[player]['position'].toString();
+                                let name = div_data[player]['participant']['name'];
+                                //let points = div_data[player]['points'].toString();
+                                let points = '0';
+                                let wins = div_data[player]['properties']['wins'].toString();
+                                let losses = div_data[player]['properties']['losses'].toString();
+                                let total = div_data[player]['properties']['played'].toString();
+                                // Rank fill with spaces
+                                let rank_space_fill = 5 - rank.length;
+                                let rank_spaces = Array(rank_space_fill).fill(' ').join('');
+                                // Name fill with spaces
+                                let name_space_fill = 20 - name.length;
+                                let name_spaces = Array(name_space_fill).fill(' ').join('');
+                                // Points fill with spaces
+                                let points_space_fill = 7 - points.length;
+                                let points_spaces = Array(points_space_fill).fill(' ').join('');
+                                // Wins fill with spaces
+                                let wins_space_fill = 3 - wins.length;
+                                let wins_spaces = Array(wins_space_fill).fill(' ').join('');
+                                // Losses fill with spaces
+                                let losses_space_fill = 3 - losses.length;
+                                let losses_spaces = Array(losses_space_fill).fill(' ').join('');
+                                // Total fill with spaces
+                                let total_space_fill = 3 - total.length;
+                                let total_spaces = Array(total_space_fill).fill(' ').join('');
+                                responseMsg.push('| '+rank+rank_spaces+' | '+name+name_spaces+' | '+points+points_spaces+' | '+wins+wins_spaces+' | '+losses+losses_spaces+' | '+total+total_spaces+' |');
+                            }
+                            responseMsg.push('```');
+                        }
+                        msg.channel.send(responseMsg.join('\n'));
+                    });
+                    console.log('div1 aufruf by: ' + msg.author.username);
+                }
+            }
         };
     }
     mapToorIdToUser(id) {
