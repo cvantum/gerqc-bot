@@ -8,6 +8,7 @@ const Core = require(process.env.PWD+'/modules/core.js');
 const Challonge = require(process.env.PWD+'/modules/challonge.js');
 const QCAPI = require(process.env.PWD+'/modules/qc-api.js');
 const DraftCup = require(process.env.PWD+'/modules/draft-cup.js');
+const ToorAPI = require(process.env.PWD+'/modules/toornament-api.js');
 
 
 try {
@@ -24,6 +25,7 @@ const core = new Core.CoreCommands(config);
 const challonge = new Challonge.ChallongeCommands(config);
 const qcapi = new QCAPI.QcAPICommands(config);
 const draftCup = new DraftCup.DraftCommands(config);
+const toorAPI = new ToorAPI.ToorAPICommands(config);
 
 
 
@@ -101,6 +103,11 @@ function getUserCommands() {
     let draftCommands = draftCup.getUserCommands();
     for (let draftCmd in draftCommands) {
         commands[draftCmd] = draftCommands[draftCmd];
+    }
+
+    let toorCommands = toorAPI.getUserCommands();
+    for (let toorCmd in toorCommands) {
+        commands[toorCmd] = toorCommands[toorCmd];
     }
 
     return commands;
