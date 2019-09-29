@@ -15,7 +15,6 @@ exports.ToorAPICommands = class ToorAPICommands {
             "matches" : {
                 desc: "Matches pro Spieler",
                 process: function (bot,msg,values) {
-                    console.log(values);
                     if (values.length === 0) {
                         let responseMsg = [];
                         responseMsg.push("Bitte Spieler angeben");
@@ -56,6 +55,37 @@ exports.ToorAPICommands = class ToorAPICommands {
                         msg.channel.send(responseMsg.join('\n'));
                     }
                     console.log('matches aufruf by: ' + msg.author.username );
+                }
+            },
+            "scheduled" : {
+                desc: "Offene Matches mit Datum",
+                process: function (bot,msg,values) {
+                    let options = {
+                        url: 'https://api.toornament.com/viewer/v2/tournaments/2728910676650975232/matches?is_scheduled=1&sort=schedule&statuses=pending',
+                        headers: {
+                            'X-Api-Key': self.config.toornament_token,
+                            'Range': 'matches=0-127'
+                        }
+                    };
+                    request( options, (error, response, body) => {
+                        let responseMsg = [];
+                        if (body === '') {
+                            responseMsg.push('*Keine Daten gefunden*');
+                        } else {
+                            let match_data = JSON.parse(body);
+                            //console.log(match_data);
+                            responseMsg.push('Ausstehende Spiele');
+                            for (let match_id in match_data) {
+                                responseMsg.push('**Match-Nr.:** '+ match_id.toString() );
+                                responseMsg.push('> :game_die: Status: **'+match_data[match_id]['status']+'**');
+                                responseMsg.push('> :stopwatch: Datum: *'+match_data[match_id]['scheduled_datetime']+'*');
+                                responseMsg.push('> Spieler1: `'+match_data[match_id]['opponents'][0]['participant']['name']+'`');
+                                responseMsg.push('> Spieler2: `'+match_data[match_id]['opponents'][1]['participant']['name']+'`');
+                            }
+                        }
+                        msg.channel.send(responseMsg.join('\n'));
+                    });
+                    console.log('schedulued aufruf by: ' + msg.author.username );
                 }
             },
             "div1" : {
