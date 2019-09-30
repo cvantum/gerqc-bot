@@ -41,7 +41,9 @@ exports.ToorAPICommands = class ToorAPICommands {
                                     if (match_data[match_id]['scheduled_datetime'] === null) {
                                         responseMsg.push('> :stopwatch: Datum: *ausstehend*')
                                     } else {
-                                        responseMsg.push('> :stopwatch: Datum: *'+match_data[match_id]['scheduled_datetime']+'*');
+                                        let dateconv_day = new Date(match_data[match_id]['scheduled_datetime']).toLocaleDateString('de-DE');
+                                        let dateconv_date = new Date(match_data[match_id]['scheduled_datetime']).toLocaleTimeString('de-DE');
+                                        responseMsg.push('> :stopwatch: Datum: *'+dateconv_day+' '+dateconv_date+'*');
                                     }
                                     responseMsg.push('> Spieler1: `'+match_data[match_id]['opponents'][0]['participant']['name']+'`');
                                     responseMsg.push('> Spieler2: `'+match_data[match_id]['opponents'][1]['participant']['name']+'`');
@@ -76,9 +78,11 @@ exports.ToorAPICommands = class ToorAPICommands {
                             //console.log(match_data);
                             responseMsg.push('Ausstehende Spiele');
                             for (let match_id in match_data) {
+                                let dateconv_day = new Date(match_data[match_id]['scheduled_datetime']).toLocaleDateString('de-DE');
+                                let dateconv_date = new Date(match_data[match_id]['scheduled_datetime']).toLocaleTimeString('de-DE');
                                 responseMsg.push('**Match-Nr.:** '+ match_id.toString() );
                                 responseMsg.push('> :game_die: Status: **'+match_data[match_id]['status']+'**');
-                                responseMsg.push('> :stopwatch: Datum: *'+match_data[match_id]['scheduled_datetime']+'*');
+                                responseMsg.push('> :stopwatch: Datum: *'+dateconv_day+' '+dateconv_date+'*');
                                 responseMsg.push('> Spieler1: `'+match_data[match_id]['opponents'][0]['participant']['name']+'`');
                                 responseMsg.push('> Spieler2: `'+match_data[match_id]['opponents'][1]['participant']['name']+'`');
                             }
