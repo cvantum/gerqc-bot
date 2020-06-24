@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  node-srv:
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile
+    image: node:current-buster
+    volumes:
+    - .:/mnt/node-data/
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

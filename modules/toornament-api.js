@@ -45,8 +45,16 @@ exports.ToorAPICommands = class ToorAPICommands {
                                         let dateconv_date = new Date(match_data[match_id]['scheduled_datetime']).toLocaleTimeString('de-DE');
                                         responseMsg.push('> :stopwatch: Datum: *'+dateconv_day+' '+dateconv_date+'*');
                                     }
-                                    responseMsg.push('> Spieler1: `'+match_data[match_id]['opponents'][0]['participant']['name']+'`');
-                                    responseMsg.push('> Spieler2: `'+match_data[match_id]['opponents'][1]['participant']['name']+'`');
+                                    if (match_data[match_id]['opponents'][0]['participant']['name'] === null) {
+                                        responseMsg.push('> Spieler1: `null`');
+                                    } else {
+                                        responseMsg.push('> Spieler1: `' + match_data[match_id]['opponents'][0]['participant']['name'] + '`');
+                                    }
+                                    if (match_data[match_id]['opponents'][1]['participant']['name'] === null) {
+                                        responseMsg.push('> Spieler2: `null`');
+                                    } else {
+                                        responseMsg.push('> Spieler2: `' + match_data[match_id]['opponents'][1]['participant']['name'] + '`');
+                                    }
                                 }
                             }
                             msg.channel.send(responseMsg.join('\n'));
@@ -113,10 +121,21 @@ exports.ToorAPICommands = class ToorAPICommands {
                             responseMsg.push('```');
                             responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
                             for (let player in div_data) {
+                                console.log(player);
                                 let rank = div_data[player]['position'].toString();
-                                let name = div_data[player]['participant']['name'];
+                                let name;
+                                if (div_data[player]['participant']['name'] === null) {
+                                    name = 'null';
+                                } else {
+                                    name = div_data[player]['participant']['name'];
+                                }
                                 //let points = div_data[player]['points'].toString();
-                                let points = '0';
+                                let points;
+                                if (div_data[player]['points'] === null) {
+                                    points = '0';
+                                } else {
+                                    points = div_data[player]['points'].toString();
+                                }
                                 let wins = div_data[player]['properties']['wins'].toString();
                                 let losses = div_data[player]['properties']['losses'].toString();
                                 let total = div_data[player]['properties']['played'].toString();
@@ -169,9 +188,19 @@ exports.ToorAPICommands = class ToorAPICommands {
                             responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
                             for (let player in div_data) {
                                 let rank = div_data[player]['position'].toString();
-                                let name = div_data[player]['participant']['name'];
+                                let name;
+                                if (div_data[player]['participant']['name'] === null) {
+                                    name = 'null';
+                                } else {
+                                    name = div_data[player]['participant']['name'];
+                                }
                                 //let points = div_data[player]['points'].toString();
-                                let points = '0';
+                                let points;
+                                if (div_data[player]['points'] === null) {
+                                    points = '0';
+                                } else {
+                                    points = div_data[player]['points'].toString();
+                                }
                                 let wins = div_data[player]['properties']['wins'].toString();
                                 let losses = div_data[player]['properties']['losses'].toString();
                                 let total = div_data[player]['properties']['played'].toString();
@@ -199,7 +228,7 @@ exports.ToorAPICommands = class ToorAPICommands {
                         }
                         msg.channel.send(responseMsg.join('\n'));
                     });
-                    console.log('div1 aufruf by: ' + msg.author.username);
+                    console.log('div2 aufruf by: ' + msg.author.username);
                 }
             },
             "div3" : {
@@ -224,9 +253,19 @@ exports.ToorAPICommands = class ToorAPICommands {
                             responseMsg.push('| Platz | Name                 | Punkte  | S   | N   | G   |');
                             for (let player in div_data) {
                                 let rank = div_data[player]['position'].toString();
-                                let name = div_data[player]['participant']['name'];
+                                let name;
+                                if (div_data[player]['participant']['name'] === null) {
+                                    name = 'null';
+                                } else {
+                                    name = div_data[player]['participant']['name'];
+                                }
                                 //let points = div_data[player]['points'].toString();
-                                let points = '0';
+                                let points;
+                                if ( div_data[player]['points'] === null) {
+                                    points = '0';
+                                } else {
+                                    points = div_data[player]['points'].toString();
+                                }
                                 let wins = div_data[player]['properties']['wins'].toString();
                                 let losses = div_data[player]['properties']['losses'].toString();
                                 let total = div_data[player]['properties']['played'].toString();
@@ -254,7 +293,7 @@ exports.ToorAPICommands = class ToorAPICommands {
                         }
                         msg.channel.send(responseMsg.join('\n'));
                     });
-                    console.log('div1 aufruf by: ' + msg.author.username);
+                    console.log('div3 aufruf by: ' + msg.author.username);
                 }
             }
         };
