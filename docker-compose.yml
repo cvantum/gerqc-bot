@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: node:current-buster
     volumes:
-    - .:/mnt/node-data/
+    - ./:/opt/gerqc-bot/
     networks:
       - backend
 
